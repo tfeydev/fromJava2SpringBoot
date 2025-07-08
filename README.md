@@ -19,20 +19,7 @@ This repository documents my complete learning journey through backend and front
 
 ## 📂 Project Structure
 
-fromJava2SpringBoot/
-├── java/
-│   ├── 01-fundamentals/         # Java basics: variables, strings, input
-│   ├── 02-conditionals/         # if/else, comparisons, switch
-│   └── 03-loops/                # for, while, do-while loops
-│
-├── springboot/
-│   ├── 01-rest-crud/            # REST API with Spring Boot and JPA
-│   └── 02-auth-jwt/             # JWT Authentication in Spring Security
-│
-├── angular/
-│   └── 01-basic-app/            # Angular frontend for REST backend
-│
-└── docs/                        # PDF slides, notes, summaries
+<pre><code>```text fromJava2SpringBoot/ ├── java/ │ ├── 01-fundamentals/ # Java basics: variables, strings, input │ ├── 02-conditionals/ # if/else, comparisons, switch │ └── 03-loops/ # for, while, do-while loops │ ├── springboot/ │ ├── 01-rest-crud/ # REST API with Spring Boot and JPA │ └── 02-auth-jwt/ # JWT Authentication in Spring Security │ ├── angular/ │ └── 01-basic-app/ # Angular frontend for REST backend │ └── docs/ # PDF slides, notes, summaries ``` </code></pre>
 
 
 ---
