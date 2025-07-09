@@ -32,3 +32,4 @@ build/
 # Ignore Windows ADS metadata files
 *_Zone.Identifier
 *.Zone.Identifier
+
