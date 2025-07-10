@@ -7,21 +7,26 @@ public class MethodDemo {
 
         displayGreetings(3);
 
+        // displayGreetings(2);
+
     }
 
     static void displayGreetings(int count) {
 
-        for (int i=1; i <= count; i++) {
-            displayGreetings();
+        for (int i = 1; i <= count; i++) {
 
+            displayGreetings();
             System.out.println();
+
         }
     }
 
     // define the method
     static void displayGreetings() {
+
         System.out.println("Hello world!");
         System.out.println("Welcome, welcome.");
         System.out.println("Please make yourself at home.");
+
     }
 }
