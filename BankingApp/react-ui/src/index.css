@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Zusätzliche Stile für bessere Darstellung */
+.container {
+  max-width: 1200px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background-color: #e5e7eb;
+  font-weight: bold;
+}
+td, th {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+tr:hover {
+  background-color: #f9fafb;
+}
+h1 {
+  color: #1f2937;
+  margin-bottom: 1rem;
+}

@@ -28,7 +28,6 @@ public class BankingController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-
     @GetMapping("/customer-account-view")
     public List<Map<String, Object>> getCustomerAccountView() {
         return jdbcTemplate.queryForList("SELECT * FROM customer_account_view ORDER BY customer_id;");
