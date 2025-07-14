@@ -81,8 +81,12 @@ tacocloud-learn/
 ├── src/
 │   ├── main/
 │   │   ├── java/br/com/techthor/tacocloud/
-│   │   └── resources/templates/
-│   │       └── orderForm.html
+│   │   └── resources/
+|   |           └──static
+|   |                 └── images
+|   |                 styles.css
+|   |           └──templates/
+│   │                 └── .html
 │   └── test/
 ├── pom.xml
 └── README.md
