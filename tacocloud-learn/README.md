@@ -82,7 +82,7 @@ tacocloud-learn/
 │   ├── main/
 │   │   ├── java/br/com/techthor/tacocloud/
 │   │   └── resources/
-|   |           └──static
+│   │           └──static
 │   │                └── images
 │   │                styles.css
 │   │           └──templates/
