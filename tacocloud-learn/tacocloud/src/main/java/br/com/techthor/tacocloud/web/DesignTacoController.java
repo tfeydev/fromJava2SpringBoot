@@ -1,33 +1,47 @@
 package br.com.techthor.tacocloud.web;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import br.com.techthor.tacocloud.repositories.IngredientRepository;
+import br.com.techthor.tacocloud.repositories.TacoRepository;
 import jakarta.validation.Valid;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
+// import org.springframework.web.bind.annotation.ModelAttribute; // Thymeleaf-related, commented out
+// import org.springframework.ui.Model; // Thymeleaf-related, commented out
+// import org.springframework.web.bind.annotation.SessionAttributes; // Thymeleaf-related, commented out
+
+
 import br.com.techthor.tacocloud.Ingredient;
-import br.com.techthor.tacocloud.Ingredient.Type;
 import br.com.techthor.tacocloud.Taco;
 import br.com.techthor.tacocloud.TacoOrder;
-import org.springframework.web.bind.support.SessionStatus;
 
 @Slf4j
-@Controller
-@RequestMapping("/design")
-@SessionAttributes("tacoOrder")
+// @Controller // old annotation for Thymeleaf
+@CrossOrigin(origins = "http://localhost:5173")
+@RestController
+@RequestMapping("/api/design") // Customized path for REST API
+// @SessionAttributes("tacoOrder") // Thymeleaf-related, commented out
 public class DesignTacoController {
 
-    @ModelAttribute
+    private final IngredientRepository ingredientRepo;
+    private final TacoRepository tacoRepo;
+
+    public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository tacoRepo) {
+        this.ingredientRepo = ingredientRepo;
+        this.tacoRepo = tacoRepo;
+    }
+
+    // Thymeleaf-based method, commented out
+    /*@ModelAttribute
     public void addIngredientsToModel(Model model) {
         List<Ingredient> ingredients = Arrays.asList(
                 new Ingredient("FLTO", "Flour Tortilla", Type.WRAP),
@@ -47,23 +61,33 @@ public class DesignTacoController {
             model.addAttribute(type.toString().toLowerCase(),
             filterByType(ingredients, type));
         }
-    }
+    }*/
 
-    @ModelAttribute(name = "tacoOrder")
+    // Thymeleaf-based method, commented out
+    /*@ModelAttribute(name = "tacoOrder")
     public TacoOrder order() {
         return new TacoOrder();
-    }
+    }*/
 
-    @ModelAttribute(name = "taco")
+    // Thymeleaf-based method, commented out
+    /*@ModelAttribute(name = "taco")
     public Taco taco() {
         return new Taco();
     }
     @GetMapping
     public String showDesignForm() {
         return "design";
+    }*/
+
+    @GetMapping("/ingredients")
+    public List<Ingredient> getIngredients() {
+        return StreamSupport
+                .stream(ingredientRepo.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 
-    @PostMapping
+    // Thymeleaf-based method, commented out
+    /*@PostMapping
     public String processTaco(
             @Valid Taco taco, Errors errors,
             @ModelAttribute TacoOrder tacoOrder) {
@@ -76,14 +100,24 @@ public class DesignTacoController {
         log.info("Processing taco: {}", taco);
 
         return "redirect:/orders/current";
+    }*/
+
+    @PostMapping
+    public ResponseEntity<?> processTaco(@Valid @RequestBody Taco taco, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
+        }
+        Taco saved = tacoRepo.save(taco);
+        return ResponseEntity.ok(saved);
     }
 
-    private Iterable<Ingredient> filterByType(
+    // Thymeleaf-based helper method, commented out
+    /*private Iterable<Ingredient> filterByType(
             List<Ingredient> ingredients, Ingredient.Type type) {
         return ingredients
                 .stream()
                 .filter(x -> x.getType().equals(type))
                 .collect(Collectors.toList());
-    }
+    }*/
 
 }
