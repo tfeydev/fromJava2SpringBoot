@@ -25,7 +25,7 @@ INSERT INTO taco_order (
   id, delivery_name, delivery_street, delivery_city,
   delivery_state, delivery_zip, cc_number, cc_expiration, cc_cvv
 ) VALUES (
-  1, 'Thorsten Fey', 'Rua Teste 123', 'Natal',
+  1, 'Thorsten', 'Rua Teste 123', 'Natal',
   'RN', '80000-000', '4111111111111111', '12/30', '123'
 );
 

@@ -33,7 +33,8 @@ function TacoDesignForm() {
       setError('Please provide a taco name and select at least one ingredient');
       return;
     }
-    const taco = { name: tacoName, ingredients: selectedIngredients };
+    const taco = { name: tacoName, ingredientIds: selectedIngredients };
+
     axios.post('http://localhost:8080/api/design', taco)
       .then(response => {
         setSuccess(`Taco "${(response.data as { name: string }).name}" created!`);

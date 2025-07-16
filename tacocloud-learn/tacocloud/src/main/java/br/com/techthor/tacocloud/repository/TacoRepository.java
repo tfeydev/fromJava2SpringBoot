@@ -1,7 +1,7 @@
-package br.com.techthor.tacocloud.repositories;
+package br.com.techthor.tacocloud.repository;
 
+import br.com.techthor.tacocloud.model.Taco;
 import org.springframework.data.repository.CrudRepository;
-import br.com.techthor.tacocloud.Taco;
 
 public interface TacoRepository extends CrudRepository<Taco, Long> {
 }
