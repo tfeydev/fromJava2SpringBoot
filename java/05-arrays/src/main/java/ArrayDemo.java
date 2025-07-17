@@ -1,4 +1,4 @@
-public class ArrayDemo {
+ public class ArrayDemo {
 
     public static void main(String[] args) {
 
@@ -18,5 +18,22 @@ public class ArrayDemo {
         System.out.println("Length of the array: " + colors.length);
 
         System.out.println();
+
+        // loop through the array - version 1
+        System.out.println("Looping through the array - Version 1:");
+
+        for (int i = 0; i < colors.length; i++) {
+            System.out.println(colors[i]);
+        }
+
+        System.out.println();
+
+        // loop through the array - version 2
+        System.out.println("Looping through the array - Version 2:");
+
+        for (String temp : colors) {
+            System.out.println(temp);
+        }
+
     }
 }

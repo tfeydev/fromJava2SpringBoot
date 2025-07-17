@@ -16,7 +16,7 @@ function TacoDesignForm() {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get<Ingredient[]>('http://localhost:8080/api/design/ingredients')
+    axios.get<Ingredient[]>('http://localhost:8080/api/ingredients')
       .then(response => setIngredients(response.data))
       .catch(() => setError('Failed to load ingredients'));
   }, []);

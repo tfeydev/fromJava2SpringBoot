@@ -7,6 +7,7 @@ function RoutesComponent() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/design" element={<TacoDesignForm />} />
+      <Route path="/order" element={<OrderForm />} /> {/* Neue Route */}
     </Routes>
   );
 }
