@@ -1,26 +1,26 @@
 
 # TacoCloud-Learn
 
-Dieses Projekt basiert auf den ersten drei Kapiteln von **Spring in Action (6. Auflage)** von Craig Walls.
+This project is based on the first three chapters of **Spring in Action (6th Edition)** by Craig Walls.
 
-Ziel ist es, das Beispielprojekt **Taco Cloud** mit moderner Architektur umzusetzen:
+The goal is to implement the sample project **Taco Cloud** using a modern architecture:
 - Spring Boot 3 (Java 21)
-- JPA mit H2-In-Memory-Datenbank
-- React (via Vite) als zukünftiges Frontend (statt Thymeleaf)
+- JPA with H2 in-memory database
+- React (via Vite) as the future frontend (replacing Thymeleaf)
 
 ---
 
-## 🔧 Einrichtung
+## 🔧 Setup
 
 ### 📦 Backend (Spring Boot + H2)
 
-#### 1. Voraussetzungen
+#### 1. Prerequisites
 
-- Java 21
-- Maven
-- IDE (z. B. IntelliJ IDEA)
+- Java 21  
+- Maven  
+- IDE (e.g., IntelliJ IDEA)
 
-#### 2. Wichtige Abhängigkeiten (aus `pom.xml`)
+#### 2. Key Dependencies (from `pom.xml`)
 
 ```xml
 <dependency>
@@ -58,40 +58,40 @@ spring.jpa.hibernate.ddl-auto=update
 
 ## 🚧 Frontend (React/Vite)
 
-Das Frontend wird mit React und Vite entwickelt und ersetzt das klassische Thymeleaf aus dem Buch. Die Integration erfolgt nach Abschluss der Backend-Grundlagen.
+The frontend is being developed with React and Vite and will replace the traditional Thymeleaf setup from the book. Integration will take place after completing the backend fundamentals.
 
 ---
 
-## 📚 Bezug zum Buch
+## 📚 Relation to the Book
 
-Dieses Projekt folgt dem Lernpfad von *Spring in Action*:
+This project follows the learning path of *Spring in Action*:
 
-- Kapitel 1–3: Grundlagen von Spring Boot, Controller, Datenmodellierung mit JPA
-- Ziel: Moderne, realitätsnahe Architektur mit REST und Frontend-Entkopplung
-
----
-
-## 📝 Hinweise
-
-- Aktuell ist das Projekt **ohne Sicherheits- oder Benutzermanagement**.
-- Für einen einfachen Einstieg in Spring Boot mit Datenbankanbindung gedacht.
-- Die H2-Konsole ist unter `http://localhost:8080/h2-console` erreichbar.
+- Chapters 1–3: Spring Boot fundamentals, controllers, and data modeling with JPA  
+- Goal: A modern, realistic architecture with REST and frontend decoupling
 
 ---
 
-## 📁 Ordnerstruktur
+## 📝 Notes
+
+- The project currently has **no security or user management**.  
+- Intended as a simple introduction to Spring Boot with database integration.  
+- The H2 console is available at `http://localhost:8080/h2-console`.
+
+---
+
+## 📁 Folder Structure
 
 ```text
-├── model             → JPA-Entity-Klassen (Taco, Ingredient, TacoOrder)
-├── repository        → CrudRepository-Interfaces
-├── service           → Geschäftslogik-Schicht
-├── controller        → REST-Endpunkte (z. B. /api/orders)
-└── config            → Konfigurationen (z. B. WebConfig)
+├── model             → JPA entity classes (Taco, Ingredient, TacoOrder)
+├── repository        → CrudRepository interfaces
+├── service           → Business logic layer
+├── controller        → REST endpoints (e.g., /api/orders)
+└── config            → Configuration classes (e.g., WebConfig)
 ```
 
 ---
 
 ## 📌 Status
 
-✅ Backend funktionsfähig  
-🚧 Frontend in Arbeit
+✅ Backend is functional  
+🚧 Frontend is in progress
