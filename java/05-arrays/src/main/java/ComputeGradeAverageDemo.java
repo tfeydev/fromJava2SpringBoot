@@ -1,23 +1,8 @@
 import java.util.Scanner;
 
-public class StudentGradesDemo {
+public class ComputeGradeAverageDemo {
 
     public static void main(String[] args) {
-
-        /*
-        // initialize  the array
-        double[] grades = new double[3];
-
-        // assign student grades
-        grades[0] = 100.0;
-        grades[1] = 76.7;
-        grades[2] = 89.0;
-
-        // display the grades
-        for (double temp : grades) {
-            System.out.println(temp);
-        }
-        */
 
         // prompt the user for how many grades
         Scanner scanner = new Scanner(System.in);
@@ -42,7 +27,27 @@ public class StudentGradesDemo {
             System.out.println(temp);
         }
 
+        System.out.println();
+
+        // compute average
+        double gradeAverage = computeGradeAverage(userInputGrades);
+
+        System.out.println("Grade average: " + gradeAverage);
+
         scanner.close();
 
+    }
+
+    private static double computeGradeAverage(double[] userInputGrades) {
+
+        double sum = 0.0;
+
+        // compute the sum of the grades
+        for (double temp : userInputGrades) {
+            sum += temp;
+        }
+
+        // compute the grade average, based on the length of the array
+        return sum / userInputGrades.length;
     }
 }
