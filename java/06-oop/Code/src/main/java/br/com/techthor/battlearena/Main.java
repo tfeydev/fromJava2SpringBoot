@@ -4,16 +4,22 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Enemy enemy = new Enemy();
+        Enemy zombie = new Enemy("Zombie", 10, 1);
+        Enemy ogre = new Enemy("Ogre", 20, 3);
+        ogre.setAttackDamage(100);
 
-        enemy.setTypeOfEnemy("Zombie");
+//        System.out.println(zombie.getTypeOfEnemy() + " has " + zombie.getHealthPoints() +
+//                " health points and can do an attack of " + zombie.getAttackDamage());
+//
+//        zombie.talk();
+//        zombie.walkForward();
+//        zombie.attack();
+//
+//        ogre.talk();
+//        ogre.walkForward();
 
-        System.out.println(enemy.getTypeOfEnemy() + " has " + enemy.getHealthPoints() +
-                " health points and can do an attack of " + enemy.getAttackDamage());
-
-        enemy.talk();
-        enemy.walkForward();
-        enemy.attack();
+        System.out.println(zombie.getAttackDamage());
+        System.out.println(ogre.getAttackDamage());
 
     }
 }
