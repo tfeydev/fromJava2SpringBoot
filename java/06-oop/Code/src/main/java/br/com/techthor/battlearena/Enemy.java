@@ -2,24 +2,20 @@ package br.com.techthor.battlearena;
 
 public class Enemy {
 
+    private int id;
     private String typeOfEnemy;
     private int healthPoints;
     private int attackDamage;
+    private static int numberOfEnemies;
 
-    public Enemy(String typeOfEnemy, int healthPoints, int attackDamage) {
-        this.typeOfEnemy = typeOfEnemy;
+    public Enemy(int healthPoints, int attackDamage) {
         this.healthPoints = healthPoints;
         this.attackDamage = attackDamage;
+        numberOfEnemies++;
+        this.id = numberOfEnemies;
     }
 
     // getter amd setter
-    public String getTypeOfEnemy() {
-        return typeOfEnemy;
-    }
-
-    public void setTypeOfEnemy(String typeOfEnemy) {
-        this.typeOfEnemy = typeOfEnemy;
-    }
 
     public int getHealthPoints() {
         return healthPoints;
@@ -37,16 +33,24 @@ public class Enemy {
         this.attackDamage = attackDamage;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getNumberOfEnemies() {
+        return numberOfEnemies;
+    }
+
     // methods
     public void talk() {
-        System.out.println("I am a " + typeOfEnemy + " be prepared to fight!");
+        System.out.println("I am a enemy be prepared to fight!");
     }
 
     public void walkForward() {
-        System.out.println(typeOfEnemy + " moves closer to you");
+        System.out.println("Enemy moves closer to you");
     }
 
     public void attack() {
-        System.out.println(typeOfEnemy + " attacks for " + attackDamage + " damage");
+        System.out.println("Enemy attacks for " + attackDamage + " damage");
     }
 }
