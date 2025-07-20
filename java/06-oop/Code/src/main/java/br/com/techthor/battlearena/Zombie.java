@@ -1,6 +1,6 @@
 package br.com.techthor.battlearena;
 
-public class Zombie extends Enemy {
+public class Zombie extends Enemy implements IZombie {
 
     public Zombie(int healthPoints, int attackDamage) {
         super(healthPoints, attackDamage);
@@ -12,6 +12,11 @@ public class Zombie extends Enemy {
     }
 
     @Override
+    public void stareDown() {
+
+    }
+
+    @Override
     public void specialAttack() {
         boolean didSpecialAttackWork = Math.random() < .50;
         if (didSpecialAttackWork) {
@@ -20,7 +25,8 @@ public class Zombie extends Enemy {
         }
     }
 
-    public void spreadDisease() {
-        System.out.println("The zombie is trying to spread infection");
+    @Override
+    public void battleStance() {
+        System.out.println("Zombie cracks neck and sticks arms out.");
     }
 }

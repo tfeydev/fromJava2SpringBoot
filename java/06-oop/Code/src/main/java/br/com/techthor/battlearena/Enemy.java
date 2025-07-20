@@ -1,6 +1,6 @@
 package br.com.techthor.battlearena;
 
-public class Enemy {
+public abstract class Enemy implements IEnemy {
 
     private int id;
     private String typeOfEnemy;
@@ -17,36 +17,43 @@ public class Enemy {
         this.id = numberOfEnemies;
     }
 
+    @Override
     public void specialAttack() {
         System.out.println("Enemy does not have a special attack");
     }
 
     // getter amd setter
-
+    @Override
     public int getHealthPoints() {
         return healthPoints;
     }
 
-    public void setHealthPoints(int healthPoints) {
-        this.healthPoints = healthPoints;
-    }
-
+    @Override
     public int getHealthPointsRemaining() {
         return healthPointsRemaining;
     }
 
+    @Override
+    public void setHealthPointsRemaining() {
+
+    }
+
+    @Override
     public void setHealthPointsRemaining(int healthPointsRemaining) {
         this.healthPointsRemaining = healthPointsRemaining;
     }
 
+    @Override
     public int getAttackDamage() {
         return attackDamage;
     }
 
+    @Override
     public void setAttackDamage(int attackDamage) {
         this.attackDamage = attackDamage;
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -56,15 +63,15 @@ public class Enemy {
     }
 
     // methods
+    @Override
     public void talk() {
         System.out.println("I am a enemy be prepared to fight!");
     }
 
-    public void walkForward() {
-        System.out.println("Enemy moves closer to you");
-    }
-
+    @Override
     public void attack() {
         System.out.println("Enemy attacks for " + attackDamage + " damage");
     }
+
+    public abstract void stareDown();
 }
