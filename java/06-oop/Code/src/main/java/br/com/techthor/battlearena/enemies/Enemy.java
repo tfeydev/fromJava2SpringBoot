@@ -1,4 +1,4 @@
-package br.com.techthor.battlearena;
+package br.com.techthor.battlearena.enemies;
 
 public abstract class Enemy implements IEnemy {
 

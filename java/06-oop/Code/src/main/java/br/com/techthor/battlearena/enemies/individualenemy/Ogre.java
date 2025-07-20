@@ -1,4 +1,6 @@
-package br.com.techthor.battlearena;
+package br.com.techthor.battlearena.enemies.individualenemy;
+
+import br.com.techthor.battlearena.enemies.Enemy;
 
 public class Ogre extends Enemy implements IOgre {
 
