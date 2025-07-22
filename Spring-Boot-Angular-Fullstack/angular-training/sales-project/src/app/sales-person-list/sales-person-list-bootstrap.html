@@ -4,7 +4,8 @@
       <th>First Name</th>
       <th>Last Name</th>
       <th>Email</th>
-      <th>Sales Amount</th>
+      <th>Sales Volume</th>
+      <th>Met Quota?</th>
     </tr>
   </thead>
   <tbody>
@@ -12,7 +13,15 @@
       <td>{{ tempSalesPerson.firstName }}</td>
       <td>{{ tempSalesPerson.lastName }}</td>
       <td>{{ tempSalesPerson.email }}</td>
-      <td>{{ tempSalesPerson.salesVolume }}</td>
+      <td>{{ tempSalesPerson.salesVolume | currency: 'USD' }}</td>
+      <td>
+        <div *ngIf="tempSalesPerson.salesVolume >= 60000; else notMet">
+          <span class="badge bg-success">Yes</span>
+        </div>
+        <ng-template #notMet>
+          <span class="badge bg-danger">No</span>
+        </ng-template>
+      </td>
     </tr>
   </tbody>
 </table>
