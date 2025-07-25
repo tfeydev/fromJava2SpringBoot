@@ -1,4 +1,4 @@
-package br.com.techthor.oraclerest;
+package br.com.techthor.hr;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

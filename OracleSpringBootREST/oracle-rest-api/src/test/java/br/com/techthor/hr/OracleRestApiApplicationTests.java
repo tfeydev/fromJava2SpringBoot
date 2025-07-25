@@ -1,4 +1,4 @@
-package br.com.techthor.oraclerest;
+package br.com.techthor.hr;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

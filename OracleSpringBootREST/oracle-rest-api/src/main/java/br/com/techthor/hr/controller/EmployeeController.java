@@ -1,7 +1,7 @@
-package br.com.techthor.oraclerest.controller;
+package br.com.techthor.hr.controller;
 
-import br.com.techthor.oraclerest.entity.Employee;
-import br.com.techthor.oraclerest.repository.EmployeeRepository;
+import br.com.techthor.hr.entity.Employee;
+import br.com.techthor.hr.repository.EmployeeRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

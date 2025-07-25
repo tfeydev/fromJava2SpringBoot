@@ -1,4 +1,4 @@
-package br.com.techthor.oraclerest.entity;
+package br.com.techthor.hr.entity;
 
 import jakarta.persistence.*;
 
