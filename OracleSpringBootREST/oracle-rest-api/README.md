@@ -1,7 +1,8 @@
+
 # Oracle REST API with Spring Boot
 
 This project demonstrates how to build a simple REST API using **Spring Boot** and **Oracle Database XE**.  
-It connects to the Oracle `HR` schema and exposes data from the `EMPLOYEES` table via a REST endpoint.
+It connects to the Oracle `HR` schema and exposes data from the `EMPLOYEES` table via REST endpoints.
 
 ## 🔧 Technology Stack
 
@@ -22,22 +23,22 @@ It connects to the Oracle `HR` schema and exposes data from the `EMPLOYEES` tabl
 
 ## ▶️ Running the Application
 
-Make sure Oracle XE is installed, running, and the `HR` schema is available and unlocked:
+Ensure Oracle XE is installed, running, and the `HR` schema is unlocked:
 
 ```sql
 ALTER USER hr ACCOUNT UNLOCK;
 ALTER USER hr IDENTIFIED BY hr;
 ```
 
-Then start the application:
+Then start the Spring Boot application:
 
 ```bash
 mvn spring-boot:run
 ```
 
-## 🔗 Oracle Database Configuration
+## 🔗 Database Configuration
 
-Edit the connection in `src/main/resources/application.properties`:
+Edit the connection details in `src/main/resources/application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:oracle:thin:@localhost:1521/XEPDB1
@@ -63,25 +64,28 @@ src/
          └── application.properties
 ```
 
-## ✅ Implemented Endpoint
+## ✅ Implemented Endpoints
 
 ### `GET /api/employees`
 
 Returns all employees from the `HR.EMPLOYEES` table.
 
-Example:
+### `GET /api/employees/{id}`
+
+Returns a single employee by ID.
+
+Example response:
 
 ```json
-[
-  {
-    "id": 100,
-    "firstName": "Steven",
-    "lastName": "King"
-  },
-  ...
-]
+{
+  "id": 100,
+  "firstName": "Steven",
+  "lastName": "King"
+}
 ```
 
-## 🛠️ CRUD
+## 📌 Notes
 
-Create, update and delete endpoints will follow in upcoming versions.
+- Oracle XE must have the HR sample schema installed and available.
+- All endpoints return JSON.
+- More CRUD functionality (POST, PUT, DELETE) will follow in future versions.
