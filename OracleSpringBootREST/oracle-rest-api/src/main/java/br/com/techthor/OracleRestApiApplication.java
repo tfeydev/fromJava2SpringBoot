@@ -1,4 +1,4 @@
-package br.com.techthor.hr;
+package br.com.techthor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

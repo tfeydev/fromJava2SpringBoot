@@ -89,3 +89,17 @@ Example response:
 - Oracle XE must have the HR sample schema installed and available.
 - All endpoints return JSON.
 - More CRUD functionality (POST, PUT, DELETE) will follow in future versions.
+
+
+## 🔄 Multiple Oracle Schemas: EC + HR
+
+This project uses two Oracle schemas:
+
+- `EC`: main application schema (products, orders, etc.)
+- `HR`: secondary schema (employee demo)
+
+### Configuration
+- `EC` is the default Spring Boot datasource.
+- `HR` is configured via a separate `DataSource`, `EntityManagerFactory`, and `TransactionManager`.
+
+See: `HrDataSourceConfig.java`
