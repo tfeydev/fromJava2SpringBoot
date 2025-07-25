@@ -1,0 +1,5 @@
+@media (max-width: 600px) {
+  .logo {
+    height: 30px; /* Kleinere Größe für mobile Geräte */
+  }
+}

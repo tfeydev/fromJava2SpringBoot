@@ -1,0 +1,11 @@
+.spacer {
+  flex: 1 1 auto;
+}
+mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
