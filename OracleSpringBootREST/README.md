@@ -1,77 +1,71 @@
-
 # Fullstack E-Commerce Application with Spring Boot, Angular and Oracle
 
-This project is a customized version of the e-commerce application taught by Chad Darby.  
-The backend has been adapted to use **Oracle Database XE** instead of MySQL.
+This repository contains a customized version of Chad Darby’s e-commerce application, featuring a Spring Boot backend, Angular 20+ frontend, and Oracle XE database.
 
-## 📚 Based on the Course
+## 📚 Course Foundation
+
 - **Instructor:** Chad Darby
 - **Course:** Full Stack: Angular and Spring Boot (Udemy)
-- **Original DB:** MySQL
-- **Adaptation:** Oracle XE, PL/SQL extensions planned
+- **Original Database:** MySQL
+- **Adaptation:** Oracle XE (including planned PL/SQL enhancements)
 
-## 🧱 Architecture Overview
+## 🏗️ Architecture Overview
 
-- **Frontend:** Angular (SPA, responsive UI)
-- **Backend:** Spring Boot (REST APIs, JPA, Validation, Security)
-- **Database:** Oracle XE (Schema `EC`, PL/SQL, Trigger, Views planned)
-- **Data Access:** Spring Data JPA (Hibernate with Oracle Dialect)
+- **Frontend:** Angular 20+ (Standalone components, Angular Material)
+- **Backend:** Spring Boot 3.5.4 (REST APIs, Spring Data JPA, Validation)
+- **Database:** Oracle XE (Schemas: `EC` for e-commerce, `HR` for demo)
+- **Data Access:** Hibernate ORM with Oracle dialect
 
-## 🔁 Status of Migration
+## 🔄 Migration Status
 
-| Component        | Status           | Notes                            |
-|------------------|------------------|----------------------------------|
-| User Schema      | ✅ Done           | `EC` user with required grants   |
-| Tables           | ✅ Done           | All MySQL tables converted       |
-| Sample Data      | 🟡 In Progress    | Based on original insert scripts |
-| PL/SQL Logic     | 🔜 Planned        | Stored procs, triggers, views    |
-| Spring Integration | 🔜 Planned      | JDBC/Procedure, Transactions     |
+| Component          | Status         | Notes                                    |
+| ------------------ | -------------- | ---------------------------------------- |
+| EC Schema & Grants | ✅ Completed    | Created `EC` user and granted privileges |
+| Table Definitions  | ✅ Completed    | All tables converted from MySQL          |
+| Sample Data        | 🔶 In Progress | Product inserts underway                 |
+| PL/SQL Logic       | 🔜 Planned     | Stored procedures, triggers, views       |
+| Spring Integration | 🔜 Planned     | PL/SQL calls, advanced transactions      |
 
-## 🛠 Setup Instructions
+## 🛠️ Setup Instructions
 
 ### 1. Oracle XE
 
-Install Oracle XE 21c or higher locally. Ensure access to `XEPDB1` PDB.
+Install Oracle XE 21c (or higher) and ensure the `XEPDB1` Pluggable DB is accessible.
 
-### 2. Run SQL Scripts
+### 2. Initialize `EC` Schema
 
-- Create schema and tables:
+```bash
+sqlplus sys/<SYS_PASSWORD>@localhost:1521/XEPDB1 AS SYSDBA @oracle-ecommerce-ec-setup.sql
+```
+
+### 3. Load Sample Data
+
+```bash
+sqlplus ec/ec@localhost:1521/XEPDB1 @oracle-ecommerce-sample-data.sql
+```
+
+### 4. Backend Configuration
+
+- Update `application.properties` for your Oracle credentials.
+- Run:
   ```bash
-  sqlplus sys/<password>@localhost:1521/XEPDB1 AS SYSDBA @oracle-ecommerce-ec-setup.sql
+  mvn spring-boot:run
   ```
+- Swagger UI: `http://localhost:8080/docs`
 
-- Insert sample data:
-  ```bash
-  sqlplus ec/ec@localhost:1521/XEPDB1 @oracle-ecommerce-sample-data.sql
-  ```
+### 5. Angular Frontend
 
-### 3. Frontend Assets
+```bash
+cd angular-frontend
+npm install
+npm start
+```
 
-- Copy the image folder from the course material into:
-  ```
-  angular-ecommerce/src/assets/images/products
-  ```
-
-- Angular will serve images via relative paths.
+- Web app: `http://localhost:4200`
+- Copy all image assets into `src/assets` (see `angular.json`).
 
 ## 🔮 Next Steps
 
-- Create Oracle PL/SQL procedures (e.g. order processing)
-- Add triggers for audit/logging
-- Build materialized views for sales analytics
-- Integrate stored procedures into Spring Boot
-- Use `@Transactional`, test isolation levels
-
-## 📌 Goals
-
-This project aims to provide:
-
-- Full Oracle-based backend experience
-- Exposure to advanced DB concepts (PL/SQL, triggers, locks)
-- Spring Boot integration with real-world DB behavior
-- Fullstack setup ready for deployment and testing
-
----
-
-This version is ideal for developers who want to go **beyond simple CRUD APIs** and understand how **enterprise applications** integrate deeply with Oracle.
-
+- Implement PL/SQL procedures for order processing
+- Add audit triggers and materialized views
+- Integrate advanced transaction management in Spring
