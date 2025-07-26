@@ -1,11 +1,12 @@
-.spacer {
-  flex: 1 1 auto;
-}
-mat-toolbar {
+nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
 }
-.active {
-  font-weight: bold;
-  text-decoration: underline;
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 20px;
 }
