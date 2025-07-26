@@ -1,4 +1,4 @@
-<div class="container">
+<div class="table-container">
   <table mat-table [dataSource]="dataSource">
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -31,11 +31,17 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+
+  <div class="loading-overlay" *ngIf="loading">
+    <mat-spinner diameter="50" *ngIf="loading"></mat-spinner>
+  </div>
+
+
   <mat-paginator
     [length]="totalElements"
-    [pageSize]="10"
+    [pageSize]="5"
     [pageSizeOptions]="[5, 10, 25, 50]"
     (page)="loadData()">
   </mat-paginator>
-  <mat-spinner *ngIf="loading"></mat-spinner>
+  
 </div>
