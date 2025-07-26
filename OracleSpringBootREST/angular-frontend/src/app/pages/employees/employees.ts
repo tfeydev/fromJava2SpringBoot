@@ -1,13 +1,51 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Employee } from '../../common/hr/employee';
+import { EmployeeService } from '../../service/employee-service';
+import { EmployeePage } from '../../common/hr/employee-page';
 
 @Component({
   selector: 'app-employees',
+  standalone: true,
   imports: [
-    
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './employees.html',
-  styleUrl: './employees.css'
+  styleUrls: ['./employees.css']
 })
-export class Employees {
+export class Employees implements AfterViewInit{
+
+  displayedColumns: string[] = ['id', 'firstname', 'lastname', 'email', 'phone', 'hireDate', 'jobid'];
+  dataSource = new MatTableDataSource<Employee>([]);
+  totalElements = 0;
+  loading = false;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  constructor(private service: EmployeeService) {}
+
+  ngAfterViewInit(): void {
+    this.loadData();
+    this.paginator.page.subscribe(() => this.loadData());
+  }
+
+  loadData(): void {
+    this.loading = true;
+    const page = this.paginator.pageIndex || 0;
+    const size = this.paginator.pageSize || 10;
+
+    this.service.getEmployees(page, size).subscribe((response: EmployeePage) => {
+      this.dataSource.data = response.content;
+      this.totalElements = response.totalElements;
+      this.loading = false;
+    });
+    
+  }
 
 }
