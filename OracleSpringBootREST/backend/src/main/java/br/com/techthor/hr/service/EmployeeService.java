@@ -7,10 +7,12 @@ import br.com.techthor.hr.repository.EmployeeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class EmployeeService {
+@Service
+public class EmployeeService implements IEmployeeService {
 
     private final EmployeeRepository repository;
 
@@ -18,15 +20,16 @@ public class EmployeeService {
         this.repository = repository;
     }
 
+    @Override
     public EmployeePageDTO getAll(int page, int size) {
-        Page<Employee> result = repository.findAll(PageRequest.of(page, size));
-        List<EmployeeDTO> dtoList = result.getContent().stream().map(this::toDTO).toList();
+        Page<Employee> employeePage = repository.findAll(PageRequest.of(page, size));
 
-        EmployeePageDTO dtoPage = new EmployeePageDTO();
-        dtoPage.setContent(dtoList);
-        dtoPage.setTotalElements(result.getTotalElements());
+        List<EmployeeDTO> content = employeePage.getContent()
+            .stream()
+            .map(EmployeeDTO::new)
+            .toList();
 
-        return dtoPage;
+        return new EmployeePageDTO(content, employeePage.getTotalElements());
     }
 
     public EmployeeDTO getById(Long id) {

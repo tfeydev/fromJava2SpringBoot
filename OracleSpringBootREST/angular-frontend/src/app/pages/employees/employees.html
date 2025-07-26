@@ -15,6 +15,26 @@
     <td mat-cell *matCellDef="let emp">{{ emp.lastName }}</td>
   </ng-container>
 
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef> Email </th>
+    <td mat-cell *matCellDef="let emp"> {{ emp.email }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="phone">
+    <th mat-header-cell *matHeaderCellDef> Phone </th>
+    <td mat-cell *matCellDef="let emp"> {{ emp.phone }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="hireDate">
+    <th mat-header-cell *matHeaderCellDef> Hire Date </th>
+    <td mat-cell *matCellDef="let emp"> {{ emp.hireDate | date }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="jobId">
+    <th mat-header-cell *matHeaderCellDef> Job ID </th>
+    <td mat-cell *matCellDef="let emp"> {{ emp.jobId }} </td>
+  </ng-container>
+
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 

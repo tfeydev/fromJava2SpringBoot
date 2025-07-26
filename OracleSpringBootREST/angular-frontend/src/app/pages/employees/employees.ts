@@ -21,7 +21,7 @@ import { EmployeePage } from '../../common/hr/employee-page';
 })
 export class Employees implements AfterViewInit{
 
-  displayedColumns: string[] = ['id', 'firstname', 'lastname', 'email', 'phone', 'hireDate', 'jobid'];
+  displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'phone', 'hireDate', 'jobId'];
   dataSource = new MatTableDataSource<Employee>([]);
   totalElements = 0;
   loading = false;

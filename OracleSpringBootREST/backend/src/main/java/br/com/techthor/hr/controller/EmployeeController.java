@@ -16,7 +16,10 @@ public class EmployeeController {
     private final EmployeeService service;
 
     @GetMapping
-    public EmployeePageDTO getAll(@RequestParam int page, @RequestParam int size) {
+    public EmployeePageDTO getAll(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
         return service.getAll(page, size);
     }
 

@@ -2,7 +2,6 @@ package br.com.techthor.ec.controller;
 
 import br.com.techthor.ec.entity.Product;
 import br.com.techthor.ec.repository.ProductRepository;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
