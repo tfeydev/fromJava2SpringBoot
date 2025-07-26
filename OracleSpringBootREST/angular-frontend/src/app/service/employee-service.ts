@@ -11,11 +11,11 @@ export class EmployeeService {
   private readonly http = inject(HttpClient);
 
   getEmployees(page: number, size: number): Observable<EmployeePage> {
-    return this.http.get<EmployeePage>(`${API_URL}?page=${page}&size=${size}`);
+    return this.http.get<EmployeePage>(`${API_URL}?page=${page}&size=${size}`, { responseType: 'json' });
   }
 
-  getEmployeeById(id: number): Observable<EmployeePage> {
-    return this.http.get<EmployeePage>(`${API_URL}/${id}`);
+  getEmployeeById(id: number): Observable<Employee> {
+    return this.http.get<Employee>(`${API_URL}/${id}`);
   }
   
 }

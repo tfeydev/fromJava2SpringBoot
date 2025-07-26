@@ -21,13 +21,13 @@ public class EmployeeDTO {
     private String jobId;
 
     public EmployeeDTO(Employee e) {
-        this.id = e.getId();
-        this.firstName = e.getFirstName();
-        this.lastName = e.getLastName();
-        this.email = e.getEmail();
-        this.phone = e.getPhone();
-        this.hireDate = e.getHireDate().toString();
-        this.jobId = e.getJobId();
+        this.id = e.getId() != null ? e.getId() : 0L;
+        this.firstName = e.getFirstName() != null ? e.getFirstName() : "";
+        this.lastName = e.getLastName() != null ? e.getLastName() : "";
+        this.email = e.getEmail() != null ? e.getEmail() : "";
+        this.phone = e.getPhone() != null ? e.getPhone() : "";
+        this.hireDate = e.getHireDate() != null ? e.getHireDate().toString() : "";
+        this.jobId = e.getJobId() != null ? e.getJobId() : "";
     }
     
 }
