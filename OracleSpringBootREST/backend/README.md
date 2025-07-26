@@ -1,105 +1,79 @@
+# Oracle E-Commerce Schema Setup
 
-# Oracle REST API with Spring Boot
+This script bootstraps the `EC` schema for the e-commerce application.
 
-This project demonstrates how to build a simple REST API using **Spring Boot** and **Oracle Database XE**.  
-It connects to the Oracle `HR` schema and exposes data from the `EMPLOYEES` table via REST endpoints.
+1. **Requirements**
 
-## 🔧 Technology Stack
+   - Oracle XE 21c+
+   - `XEPDB1` PDB
+   - `SYSDBA` access
 
-- Java 21
-- Spring Boot 3.5.4
-- Spring Web
-- Spring Data JPA
-- Oracle XE (21c+)
-- ojdbc11 (JDBC Driver)
-
-## 📦 Maven Coordinates
-
-```xml
-<groupId>br.com.techthor</groupId>
-<artifactId>oracle-rest-api</artifactId>
-<version>0.0.1-SNAPSHOT</version>
-```
-
-## ▶️ Running the Application
-
-Ensure Oracle XE is installed, running, and the `HR` schema is unlocked:
-
-```sql
-ALTER USER hr ACCOUNT UNLOCK;
-ALTER USER hr IDENTIFIED BY hr;
-```
-
-Then start the Spring Boot application:
+2. **Create Schema & Tables**
 
 ```bash
-mvn spring-boot:run
+sqlplus sys/<SYS_PASSWORD>@localhost:1521/XEPDB1 AS SYSDBA @02-create-user-and-schema.sql
 ```
 
-## 🔗 Database Configuration
+3. **Load Data**
 
-Edit the connection details in `src/main/resources/application.properties`:
+```bash
+sqlplus ec/ec@localhost:1521/XEPDB1 @03-insert-sample-data.sql
+```
+
+4. **Verify** Connect as `ec` and run:
+
+```sql
+SELECT * FROM product_category;
+SELECT * FROM product;
+```
+
+---
+
+# Oracle REST API (HR Schema)
+
+Demonstrates a Spring Boot REST service exposing the `HR.EMPLOYEES` table.
+
+## 📦 Dependencies
+
+- Spring Boot Starter Web
+- Spring Data JPA
+- ojdbc11
+- SpringDoc OpenAPI UI
+
+## ⚙ Configuration
+
+Edit `src/main/resources/application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:oracle:thin:@localhost:1521/XEPDB1
-spring.datasource.username=hr
-spring.datasource.password=hr
+# HR (Primary DataSource)
+spring.datasource.jdbc-url=jdbc:oracle:thin:@192.168.1.32:1521/XEPDB1
+spring.datasource.username=ec
+spring.datasource.password=ec
 spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 
 spring.jpa.hibernate.ddl-auto=none
 spring.jpa.show-sql=true
 spring.jpa.database-platform=org.hibernate.dialect.OracleDialect
+
+# HR (Secondary DataSource - Read-Only)
+spring.hr.datasource.jdbc-url=jdbc:oracle:thin:@192.168.1.32:1521/XEPDB1
+spring.hr.datasource.username=hr
+spring.hr.datasource.password=hr
+spring.hr.datasource.driver-class-name=oracle.jdbc.OracleDriver
+
+# swagger
+springdoc.swagger-ui.path=/docs
 ```
 
-## 📂 Project Structure
+## 🚀 Available Endpoints
 
-```
-src/
- └── main/
-     ├── java/br/com/techthor/oraclerest/
-     │   ├── controller/        → REST Controllers
-     │   ├── entity/            → JPA Entities
-     │   └── repository/        → Spring Data Repositories
-     └── resources/
-         └── application.properties
+- **GET** `/api/employees?page={n}&size={m}` — paginated list
+- **GET** `/api/employees/{id}` — single employee by ID
+
+## 🧪 Run
+
+```bash
+mvn clean spring-boot:run
 ```
 
-## ✅ Implemented Endpoints
-
-### `GET /api/employees`
-
-Returns all employees from the `HR.EMPLOYEES` table.
-
-### `GET /api/employees/{id}`
-
-Returns a single employee by ID.
-
-Example response:
-
-```json
-{
-  "id": 100,
-  "firstName": "Steven",
-  "lastName": "King"
-}
-```
-
-## 📌 Notes
-
-- Oracle XE must have the HR sample schema installed and available.
-- All endpoints return JSON.
-- More CRUD functionality (POST, PUT, DELETE) will follow in future versions.
-
-
-## 🔄 Multiple Oracle Schemas: EC + HR
-
-This project uses two Oracle schemas:
-
-- `EC`: main application schema (products, orders, etc.)
-- `HR`: secondary schema (employee demo)
-
-### Configuration
-- `EC` is the default Spring Boot datasource.
-- `HR` is configured via a separate `DataSource`, `EntityManagerFactory`, and `TransactionManager`.
-
-See: `HrDataSourceConfig.java`
+Open Swagger UI at `http://localhost:8080/docs`.
