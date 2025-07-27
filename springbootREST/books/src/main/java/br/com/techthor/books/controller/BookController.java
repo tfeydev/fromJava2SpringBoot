@@ -1,8 +1,7 @@
 package br.com.techthor.books.controller;
 
 import br.com.techthor.books.entity.Book;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +27,34 @@ public class BookController {
     }
 
     @GetMapping("/api/books")
-    public List<Book> getBooks() {
-        return books;
+    public List<Book> getBooks(@RequestParam(required = false) String category) {
+
+        if (category == null) {
+            return books;
+        }
+
+        return books.stream()
+                .filter(book -> book.getCategory().equalsIgnoreCase(category))
+                .toList();
+
+    }
+
+    @GetMapping("/api/books/{title}")
+    public Book getBookByTitle(@PathVariable String title) {
+        return books.stream()
+                .filter(book -> book.getTitle().equalsIgnoreCase(title))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @PostMapping("/api/books")
+    public void createBook(@RequestBody Book newBook) {
+        for (Book book : books) {
+            if (book.getTitle().equalsIgnoreCase(newBook.getTitle())) {
+                return;
+            }
+        }
+        books.add(newBook);
     }
 
 }
