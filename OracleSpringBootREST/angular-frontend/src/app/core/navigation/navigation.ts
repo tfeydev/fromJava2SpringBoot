@@ -26,7 +26,6 @@ export class Navigation {
     { label: 'Home', path: '/' },
     { label: 'Products', path: '/products' },
     { label: 'Product Category', path: '/product-category' },
-    { label: 'Employees', path: '/employees' }
   ];
 
   constructor(private router: Router) {  }
