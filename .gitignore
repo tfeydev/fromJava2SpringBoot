@@ -33,3 +33,4 @@ build/
 *_Zone.Identifier
 *.Zone.Identifier
 
+OracleSpringBootREST/.env
