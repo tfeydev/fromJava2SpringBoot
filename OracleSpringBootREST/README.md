@@ -1,9 +1,9 @@
 # Fullstack E-Commerce Application with Spring Boot, Angular, and Oracle Cloud
 
 This repository is a customized version of Chad Darby’s **Full Stack: Angular and Spring Boot** course project (Sections 1–11 completed), adapted to use **Oracle Autonomous Database (ADB)** and **OCI Object Storage** for product images.  
-Section 12 development will start next.
+Section 14 development will start soon.
 
---- 
+---
 
 ## 📚 Course & Adaptation
 
@@ -12,7 +12,7 @@ Section 12 development will start next.
 | Instructor   | Chad Darby                                                              |
 | Course       | Full Stack: Angular and Spring Boot (Udemy)                             |
 | Original DB  | MySQL                                                                   |
-| Adaptation   | Oracle XE / Oracle ADB backend + OCI Object Storage for images          |
+| Adaptation   | Oracle Autonomous Database backend + OCI Object Storage for images     |
 | Enhancements | Planned PL/SQL logic, triggers, and materialized views                  |
 
 ---
@@ -23,7 +23,7 @@ Section 12 development will start next.
 |------------|------------------------------------------------------------------------|
 | Frontend   | Angular 20+ (Standalone Components, Angular Material)                  |
 | Backend    | Spring Boot 3.5.4 (REST APIs, Spring Data JPA, OpenAPI/Swagger)         |
-| Database   | Oracle XE / Oracle ADB (Schema `EC` for e-commerce)                     |
+| Database   | Oracle Autonomous Database (Schema `EC` for e-commerce)                 |
 | Data Layer | Hibernate ORM with Oracle dialect                                      |
 | Storage    | OCI Object Storage Bucket for product images                           |
 
@@ -35,7 +35,7 @@ Section 12 development will start next.
 |----------------------|--------------|----------------------------------------------------------------------------------|
 | EC Schema & Grants   | ✅ Completed | User `EC` created with required roles and privileges                             |
 | Table Definitions    | ✅ Completed | All MySQL tables migrated to Oracle                                              |
-| Sample Data          | ✅ In Completed | Product/category                                                  |
+| Sample Data          | ✅ Completed | Product/category data loaded                                                     |
 | OCI Object Storage   | ✅ Completed | Bucket configured and integrated for image hosting                               |
 | PL/SQL Logic         | 🔜 Planned   | Stored procedures, triggers, and views                                           |
 | Spring Integration   | 🔜 Planned   | PL/SQL integration and performance tuning                                        |
@@ -46,19 +46,17 @@ Section 12 development will start next.
 
 ### 1. Prerequisites
 
-- Oracle XE 21c (local) or Autonomous DB (OCI)
+- Oracle Autonomous Database (OCI)
 - Java 21, Maven 3.8+
 - Node.js & npm for Angular
 - OCI account with Object Storage bucket
 
 ---
 
-### 2. Database Setup
+### 2. Database Setup (Oracle Autonomous Database)
 
-#### Option A – Oracle Autonomous Database (ADB)
-
-1. Create ADB instance (e.g., "ecommerce") in OCI Console  
-2. Download and extract **Wallet**
+1. Create an ADB instance (e.g., `ecommerce`) in OCI Console  
+2. Download and extract the **Wallet**  
 3. Connect as `ADMIN`:
 
 ```sql
@@ -68,18 +66,12 @@ GRANT CONNECT, RESOURCE, UNLIMITED TABLESPACE TO EC;
 
 > Configure `tnsnames.ora` with Wallet credentials.
 
-#### Option B – Oracle XE
-
-```bash
-sqlplus sys/<SYS_PASSWORD>@localhost:1521/XEPDB1 AS SYSDBA @backend/src/main/resources/sql/02-create-user-and-schema.sql
-```
-
 ---
 
 ### 3. Load Sample Data
 
 ```bash
-sqlplus ec/ec@localhost:1521/XEPDB1 @backend/src/main/resources/sql/03-insert-sample-data.sql
+sqlplus ec/<password>@<TNS_ALIAS> @backend/src/main/resources/sql/03-insert-sample-data.sql
 ```
 
 ---
@@ -89,9 +81,9 @@ sqlplus ec/ec@localhost:1521/XEPDB1 @backend/src/main/resources/sql/03-insert-sa
 Edit `backend/src/main/resources/application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:oracle:thin:@localhost:1521/XEPDB1
+spring.datasource.url=jdbc:oracle:thin:@<TNS_ALIAS>
 spring.datasource.username=ec
-spring.datasource.password=ec
+spring.datasource.password=<password>
 spring.jpa.hibernate.ddl-auto=none
 spring.jpa.database-platform=org.hibernate.dialect.OracleDialect
 ```
