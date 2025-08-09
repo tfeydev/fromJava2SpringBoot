@@ -3,7 +3,7 @@
 This repository is a customized version of Chad Darby’s **Full Stack: Angular and Spring Boot** course project (Sections 1–11 completed), adapted to use **Oracle Autonomous Database (ADB)** and **OCI Object Storage** for product images.  
 Section 12 development will start next.
 
----
+--- 
 
 ## 📚 Course & Adaptation
 
