@@ -15,6 +15,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findByCategoryId(@Param("id") Long id, Pageable pageable);
 
+    Page<Product> findByNameContaining(@Param("name") String name, Pageable pageable);
+
     @Override
     @RestResource(exported = false)
     <S extends Product> S save(S entity); // disables POST AND PUT
