@@ -10,7 +10,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
     CurrencyPipe,
   ],
   // templateUrl: './product-list.html',
-  templateUrl: './product-list-table.html',
+  templateUrl: './product-list-grid.html',
   styleUrl: './product-list.css'
 })
 export class ProductList implements OnInit {
