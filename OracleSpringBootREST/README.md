@@ -35,7 +35,7 @@ Section 12 development will start next.
 |----------------------|--------------|----------------------------------------------------------------------------------|
 | EC Schema & Grants   | ✅ Completed | User `EC` created with required roles and privileges                             |
 | Table Definitions    | ✅ Completed | All MySQL tables migrated to Oracle                                              |
-| Sample Data          | 🔶 In Progress | Product/category inserts ongoing                                                 |
+| Sample Data          | ✅ In Completed | Product/category                                                  |
 | OCI Object Storage   | ✅ Completed | Bucket configured and integrated for image hosting                               |
 | PL/SQL Logic         | 🔜 Planned   | Stored procedures, triggers, and views                                           |
 | Spring Integration   | 🔜 Planned   | PL/SQL integration and performance tuning                                        |
