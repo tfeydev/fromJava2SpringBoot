@@ -1,1 +1,1 @@
-org.springframework.context.ApplicationContextInitializer=br.com.techthor.ec.config.DotenvConfig
+org.springframework.context.ApplicationContextInitializer=br.com.techthor.ecommerce.config.DotenvConfig

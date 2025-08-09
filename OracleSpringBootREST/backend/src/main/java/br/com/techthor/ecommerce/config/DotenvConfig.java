@@ -1,4 +1,4 @@
-package br.com.techthor.ec.config;
+package br.com.techthor.ecommerce.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.slf4j.Logger;

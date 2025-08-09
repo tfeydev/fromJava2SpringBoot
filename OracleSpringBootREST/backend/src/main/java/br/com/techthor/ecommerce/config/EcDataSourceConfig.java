@@ -1,4 +1,4 @@
-package br.com.techthor.ec.config;
+package br.com.techthor.ecommerce.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -17,11 +17,11 @@ import java.util.HashMap;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "br.com.techthor.ec.repository",
+        basePackages = "br.com.techthor.ecommerce.dao",
         entityManagerFactoryRef = "ecEntityManagerFactory",
         transactionManagerRef = "ecTransactionManager"
 )
-@EntityScan(basePackages = "br.com.techthor.ec.entity")
+@EntityScan(basePackages = "br.com.techthor.ecommerce.entity")
 public class EcDataSourceConfig {
 
     @Bean(name = "ecDataSource")
@@ -38,7 +38,7 @@ public class EcDataSourceConfig {
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setDataSource(dataSource);
-        factory.setPackagesToScan("br.com.techthor.ec.entity");
+        factory.setPackagesToScan("br.com.techthor.ecommerce.entity");
         factory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         HashMap<String, Object> properties = new HashMap<>();
