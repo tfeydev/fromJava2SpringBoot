@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.nio.file.Paths;
+
 public class DotenvConfig implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     private static final Logger logger = LoggerFactory.getLogger(DotenvConfig.class);
 
@@ -13,8 +15,10 @@ public class DotenvConfig implements ApplicationContextInitializer<ConfigurableA
     public void initialize(ConfigurableApplicationContext applicationContext) {
         try {
             logger.debug("Lade .env-Datei...");
+            String baseDir = System.getProperty("user.dir");
+
             Dotenv dotenv = Dotenv.configure()
-                    .directory("/home/thor/development/JavaProgramming/fromJava2SpringBoot/OracleSpringBootREST/backend")
+                    .directory(baseDir)
                     .filename(".env")
                     .ignoreIfMissing()
                     .load();
