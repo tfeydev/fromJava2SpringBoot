@@ -23,16 +23,16 @@ Below is the organized directory structure for the learning journey from Java fu
 
 ```plaintext
 fromJava2SpringBoot/
-├── java/
+├── JavaProgrammingIntroduction/
 │   ├── 01-fundamentals/   # Java basics: variables, strings, user input
 │   ├── 02-conditionals/   # Control flow: if/else, switch, comparisons
-│   └── 03-loops/         # Iteration: for, while, do-while loops
-├── springboot/
+│   └── 03-loops/          # Iteration: for, while, do-while loops
+├── SpringBoot/
 │   ├── 01-rest-crud/     # REST API with Spring Boot and JPA
 │   └── 02-auth-jwt/      # JWT authentication with Spring Security
-├── angular/
-│   └── 01-basic-app/     # Angular frontend for REST backend
-└── docs/                 # PDF slides, notes, and summaries
+├── .../
+│   └── ... 
+└── docs/   
 ```
 
 ---
