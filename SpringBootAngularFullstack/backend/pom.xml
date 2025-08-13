@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.techthor</groupId>
-	<artifactId>oracle-rest-api</artifactId>
+	<artifactId>angular-ecommerce-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>oracle-rest-api</name>
-	<description>Oracle Spring Boot Demo</description>
+	<name>angular-ecommerce-app</name>
+	<description>Angular E-commerce Application on Oracle VM</description>
 	<url/>
 	<licenses>
 		<license/>
