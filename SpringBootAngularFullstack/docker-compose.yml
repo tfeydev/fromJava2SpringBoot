@@ -6,9 +6,11 @@ services:
       context: ./backend
     container_name: backend
     env_file:
-      - /home/thor/development/JavaProgramming/fromJava2SpringBoot/SpringBootAngularFullstack/backend/.env
+      - backend/.env
     volumes:
-    - /home/thor/development/JavaProgramming/fromJava2SpringBoot/SpringBootAngularFullstack/wallet:/app/wallet
+    - ./wallet:/wallet
+    environment:
+    - TNS_ADMIN=/wallet
     ports:
       - "8080:8080"
 
