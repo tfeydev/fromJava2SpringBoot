@@ -20,9 +20,16 @@ jobs:
 
     - name: Create .env file
         run: |
-          echo "SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}" >> backend/.env
-          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}" >> backend/.env
-          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}" >> backend/.env
+          echo "DB_URL=${{ secrets.DB_URL }}" >> backend/.env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> backend/.env
+          echo "DB_PASS=${{ secrets.DB_PASS }}" >> backend/.env
+
+    - name: Decode Oracle Wallet
+      run: |
+        echo "$WALLET_ZIP_B64" | base64 -d > wallet.zip
+        unzip wallet.zip -d backend/src/main/resources/wallet
+      env:
+        WALLET_ZIP_B64: ${{ secrets.WALLET_ZIP_B64 }}
 
     - name: Deploy via SSH
       run: |
