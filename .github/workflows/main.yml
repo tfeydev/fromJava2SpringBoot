@@ -18,6 +18,12 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_KEY }}
 
+    - name: Create .env file
+        run: |
+          echo "SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}" >> backend/.env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}" >> backend/.env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}" >> backend/.env
+
     - name: Deploy via SSH
       run: |
         ssh -o StrictHostKeyChecking=no opc@${{ secrets.HOST }} << 'EOF'
