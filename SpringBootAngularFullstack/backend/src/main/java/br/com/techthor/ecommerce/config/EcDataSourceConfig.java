@@ -1,6 +1,7 @@
 package br.com.techthor.ecommerce.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -24,11 +25,23 @@ import java.util.HashMap;
 @EntityScan(basePackages = "br.com.techthor.ecommerce.entity")
 public class EcDataSourceConfig {
 
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @Value("${spring.datasource.username}")
+    private String dbUser;
+
+    @Value("${spring.datasource.password}")
+    private String dbPass;
+
     @Bean(name = "ecDataSource")
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource ecDataSource() {
         return DataSourceBuilder
                 .create()
+                .url(dbUrl)
+                .username(dbUser)
+                .password(dbPass)
                 .build();
     }
 
