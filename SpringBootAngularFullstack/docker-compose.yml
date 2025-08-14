@@ -4,19 +4,21 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    container_name: springboot-backend
+    container_name: backend
     ports:
       - "8080:8080"
-    restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-    container_name: angular-frontend
+      args:
+        API_BASE_URL: http://backend:8080/api
+    container_name: frontend
     ports:
       - "80:80"
     depends_on:
       - backend
-    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge

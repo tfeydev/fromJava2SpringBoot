@@ -1,13 +1,12 @@
-# Build-Stage (Maven build lokal im Container)
-FROM maven:3.9.6-eclipse-temurin-21 AS builder
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+# Stage 1: Build jar (optional, falls schon gebaut, sonst nur Stage 2 nötig)
+# FROM eclipse-temurin:21 AS build
+# WORKDIR /app
+# COPY . .
+# RUN ./mvnw clean package -DskipTests
 
-# Run-Stage (leichter JRE-Container)
-FROM eclipse-temurin:21-jre
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
+COPY target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
