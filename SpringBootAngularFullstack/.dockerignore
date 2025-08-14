@@ -1,0 +1,20 @@
+# Ignore environment files
+*.env
+*.env.*
+
+# Ignore wallet folder
+wallet/
+
+# Ignore node_modules and build artifacts
+/frontend/node_modules/
+frontend/dist/
+/backend/target/
+
+# Ignore IDE/editor settings
+.idea/
+.vscode/
+*.iml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
