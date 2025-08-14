@@ -21,7 +21,7 @@ jobs:
     - name: Deploy via SSH
       run: |
         ssh -o StrictHostKeyChecking=no opc@${{ secrets.HOST }} << 'EOF'
-          cd /home/opc/app/SpringBootAngularFullstack
+          cd /home/opc/ubuntu/SpringBootAngularFullstack
           git pull origin main
           docker-compose down
           docker-compose up -d --build
