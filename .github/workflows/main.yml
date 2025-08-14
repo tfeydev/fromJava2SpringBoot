@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}" >> backend/.env
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}" >> backend/.env
-          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}" >> backend/.env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}" >> backend/.env
 
     - name: Deploy via SSH
       run: |
