@@ -66,9 +66,17 @@ jobs:
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_PRIVATE_KEY }}    # <-- kompletter privater Key als Secret
-          source: "SpringBootAngularFullstack/backend.tar.gz"
-          target: "/home/ubuntu/dev/"
+          key: ${{ secrets.VM_PRIVATE_KEY }}   # <-- hier kompletter privater Key aus GitHub Secret
+          source: SpringBootAngularFullstack/backend.tar.gz
+          target: /home/ubuntu/dev/
+          port: 22
+          timeout: 30s
+          command_timeout: 10m
+          use_insecure_cipher: false
+          rm: false
+          debug: false
+          overwrite: true
+
 
       # 🔟 Docker-Image auf die VM kopieren (Frontend)
       - name: Copy Frontend Image to VM
