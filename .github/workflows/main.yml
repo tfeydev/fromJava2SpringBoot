@@ -43,24 +43,26 @@ jobs:
           ls -l dist/
 
       # 5️⃣ Docker-Images bauen
-      - name: Build Docker Images
-        run: |
-          docker build -t springboot-angular-fullstack-backend:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
-          docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
+      - name: Build Backend Docker Image
+        run: docker build -t springboot-angular-fullstack-backend:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
 
-      # 6️⃣ SSH Private Key auf VM schreiben
+      - name: Build Frontend Docker Image
+        run: docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
+
+      # 6️⃣ SSH Key schreiben
       - name: Write SSH Private Key
         run: |
-          echo "${{ secrets.VM_PRIVATE_KEY }}" > /tmp/ssh_key
-          chmod 600 /tmp/ssh_key
-          ls -l /tmp/ssh_key
+          mkdir -p /tmp/ssh
+          echo "${{ secrets.VM_PRIVATE_KEY }}" > /tmp/ssh/id_rsa
+          chmod 600 /tmp/ssh/id_rsa
+          ls -l /tmp/ssh/id_rsa
 
-      # 7️⃣ Docker Images via Stream deployen
+      # 7️⃣ Docker Images per Stream auf VM laden & Container starten
       - name: Deploy Docker Images via SSH Stream
         run: |
           (
             docker save springboot-angular-fullstack-backend:latest
             docker save springboot-angular-fullstack-frontend:latest
           ) | gzip | \
-          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
+          ssh -i /tmp/ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
           "gunzip | docker load && echo 'All images loaded'; cd /home/ubuntu/dev && docker-compose -f docker-compose.yml up -d --build"
