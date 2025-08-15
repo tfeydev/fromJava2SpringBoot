@@ -35,12 +35,13 @@ jobs:
         working-directory: ./SpringBootAngularFullstack
         run: docker build -t springboot-angular-fullstack:latest .
 
-      # 4️⃣ Image speichern
+      # 4️⃣ Image speichern (bleibt im selben Ordner!)
       - name: Save Docker Image
         if: steps.changes.outputs.changed == 'true'
+        working-directory: ./SpringBootAngularFullstack
         run: docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
-      # 5️⃣ Image auf VM kopieren
+      # 5️⃣ Image auf VM kopieren (korrekter Pfad!)
       - name: Copy Docker Image to Oracle VM
         if: steps.changes.outputs.changed == 'true'
         uses: appleboy/scp-action@v0.1.5
@@ -48,7 +49,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          source: "springboot-angular-fullstack.tar.gz"
+          source: "SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz"
           target: "/home/ubuntu/dev/"
 
       # 6️⃣ Container starten/aktualisieren
@@ -62,4 +63,4 @@ jobs:
           script: |
             cd /home/ubuntu/dev
             gunzip -c springboot-angular-fullstack.tar.gz | docker load
-            docker-compose -f docker-compose.yml up -d --build
+            docker-compose -f docker-compose.yml up -d
