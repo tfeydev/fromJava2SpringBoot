@@ -1,16 +1,12 @@
-version: "3.9"
-
 services:
   backend:
     build:
       context: ./backend
     container_name: backend
     env_file:
-      - backend/.env
+      - ../../../.env
     volumes:
-    - ./wallet:/wallet
-    environment:
-    - TNS_ADMIN=/wallet
+      - ${WALLET}:/wallet:ro
     ports:
       - "8080:8080"
 
