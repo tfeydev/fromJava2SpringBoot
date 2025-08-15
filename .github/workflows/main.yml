@@ -26,33 +26,39 @@ jobs:
         run: |
           docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
-      - name: Debug - list files
+      - name: Debug: list built file
         run: |
-          ls -l SpringBootAngularFullstack/
+          echo "Local files:"
+          ls -la SpringBootAngularFullstack || true
 
       - name: Write SSH key to runner
         run: |
           printf '%s\n' "${{ secrets.VM_SSH_KEY }}" > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
-          ls -l /tmp/deploy_key
+          echo "Wrote SSH key to /tmp/deploy_key"
 
-      - name: Copy image to VM via scp
+      - name: Copy image to VM (scp)
         run: |
+          set -x
           scp -o StrictHostKeyChecking=no -i /tmp/deploy_key \
             SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/ubuntu/dev/
+          echo "SCP completed"
 
-      - name: Deploy on VM via ssh
+      - name: Deploy on VM (ssh)
         run: |
-          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'REMOTE'
+          set -x
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} <<'REMOTE'
             set -e
             cd /home/ubuntu/dev
+            echo "Remote: listing /home/ubuntu/dev"
+            ls -la /home/ubuntu/dev
             if [ -f springboot-angular-fullstack.tar.gz ]; then
               gunzip -c springboot-angular-fullstack.tar.gz | docker load
               docker-compose -f docker-compose.yml up -d
               echo "DEPLOY_OK"
             else
-              echo "ERROR: tar.gz not found on VM!"
-              exit 2
+              echo "ERROR: tar.gz not found on VM"
+              exit 1
             fi
           REMOTE
