@@ -68,11 +68,11 @@ jobs:
       - name: Copy Backend Image to VM
         uses: appleboy/scp-action@v0.1.5
         with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          source: "SpringBootAngularFullstack/backend.tar.gz"
-          target: "/home/ubuntu/dev/"
+            host: ${{ secrets.VM_HOST }}
+            username: ${{ secrets.VM_USER }}
+            key: ${{ secrets.VM_SSH_KEY }}
+            source: "SpringBootAngularFullstack/backend.tar.gz"
+            target: "/home/ubuntu/dev/"
 
       # 1️⃣1️⃣ Docker-Image auf die VM kopieren (Frontend)
       - name: Copy Frontend Image to VM
