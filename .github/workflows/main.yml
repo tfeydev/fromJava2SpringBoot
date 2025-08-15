@@ -52,41 +52,39 @@ jobs:
         run: |
           docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
 
-      # 7️⃣ Docker-Image als tar.gz speichern (Backend)
-      - name: Save Backend Docker Image
-        run: docker save springboot-angular-fullstack-backend:latest | gzip > SpringBootAngularFullstack/backend.tar.gz
+      # 7️⃣ Docker-Images als tar.gz speichern
+      - name: Save Docker Images
+        run: |
+          docker save springboot-angular-fullstack-backend:latest | gzip > SpringBootAngularFullstack/backend.tar.gz
+          docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
 
-      # 8️⃣ Docker-Image als tar.gz speichern (Frontend)
-      - name: Save Frontend Docker Image
-        run: docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
-
-      # 9️⃣ Private SSH Key auf VM vorbereiten
+      # 8️⃣ Temporären SSH-Key schreiben
       - name: Prepare SSH Key
         run: |
-          echo "${{ secrets.VM_SSH_KEY }}" | sed 's/\\n/\n/g' > /tmp/id_rsa
+          echo "${{ secrets.VM_SSH_KEY }}" | tr '\\n' '\n' > /tmp/id_rsa
           chmod 600 /tmp/id_rsa
 
-      # 🔟 Docker-Image auf die VM kopieren (Backend)
+      # 9️⃣ Docker-Image auf die VM kopieren (Backend)
       - name: Copy Backend Image to VM
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key_path: /tmp/id_rsa
-          source: "SpringBootAngularFullstack/backend.tar.gz"
-          target: "/home/ubuntu/dev/"
+          source: SpringBootAngularFullstack/backend.tar.gz
+          target: /home/ubuntu/dev/
 
-      # 1️⃣1️⃣ Docker-Image auf die VM kopieren (Frontend)
+      # 🔟 Docker-Image auf die VM kopieren (Frontend)
       - name: Copy Frontend Image to VM
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key_path: /tmp/id_rsa
-          source: "SpringBootAngularFullstack/frontend.tar.gz"
-          target: "/home/ubuntu/dev/"
+          source: SpringBootAngularFullstack/frontend.tar.gz
+          target: /home/ubuntu/dev/
 
-      # 1️⃣2️⃣ Docker-Container via SSH auf VM starten/aktualisieren
+      # 1️⃣1️⃣ Docker-Container via SSH auf VM starten/aktualisieren
       - name: Deploy Docker Containers via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
