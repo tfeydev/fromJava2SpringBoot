@@ -11,43 +11,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Repo auschecken
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Änderungen prüfen
-      - name: Check for changes in SpringBootAngularFullstack
+      # 2️⃣ Check for changes in SpringBootAngularFullstack
+      - name: Check for changes
         id: changes
         run: |
-          echo "Checking for changes in SpringBootAngularFullstack..."
+          echo "Checking for changes..."
           CHANGED=$(git diff --name-only HEAD~1 HEAD | grep '^SpringBootAngularFullstack/' || true)
           if [ -z "$CHANGED" ]; then
-            echo "No changes detected in SpringBootAngularFullstack."
             echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "Changes detected."
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      # 3️⃣ Docker-Image bauen
-      - name: Build Docker Image
+      # 3️⃣ Build Docker image
+      - name: Build Docker image
         if: steps.changes.outputs.changed == 'true'
         working-directory: ./SpringBootAngularFullstack
         run: docker build -t springboot-angular-fullstack:latest .
 
-      # 4️⃣ Image speichern im Unterordner
-      - name: Save Docker Image
+      # 4️⃣ Save Docker image
+      - name: Save Docker image
         if: steps.changes.outputs.changed == 'true'
         working-directory: ./SpringBootAngularFullstack
         run: docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
-      # 5️⃣ Debug-Step: prüfen, ob die Datei existiert
-      - name: Debug: list Docker image file
-        if: steps.changes.outputs.changed == 'true'
-        run: ls -l SpringBootAngularFullstack/
-
-      # 6️⃣ Image auf VM kopieren
-      - name: Copy Docker Image to Oracle VM
+      # 5️⃣ SCP copy to VM
+      - name: Copy Docker image to VM
         if: steps.changes.outputs.changed == 'true'
         uses: appleboy/scp-action@v0.1.5
         with:
@@ -57,8 +50,8 @@ jobs:
           source: "SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz"
           target: "/home/ubuntu/dev/"
 
-      # 7️⃣ Container starten/aktualisieren auf der VM
-      - name: Deploy Docker Container via SSH
+      # 6️⃣ Deploy container via SSH
+      - name: Deploy Docker container
         if: steps.changes.outputs.changed == 'true'
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -70,8 +63,8 @@ jobs:
             gunzip -c springboot-angular-fullstack.tar.gz | docker load
             docker-compose -f docker-compose.yml up -d
 
-      # 8️⃣ Prüfen, ob Container läuft + Logs
-      - name: Verify Container and Show Logs
+      # 7️⃣ Verify container + last 20 logs
+      - name: Verify container
         if: steps.changes.outputs.changed == 'true'
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -79,11 +72,11 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            echo "✅ Checking container status..."
-            docker ps | grep springboot-angular
-            echo "📝 Last 20 log lines:"
+            echo "✅ Container status:"
+            docker ps --filter "name=springboot-angular"
             CONTAINER_ID=$(docker ps -q -f name=springboot-angular)
             if [ -n "$CONTAINER_ID" ]; then
+              echo "📝 Last 20 log lines:"
               docker logs --tail 20 $CONTAINER_ID
             else
               echo "No running springboot-angular container found."
