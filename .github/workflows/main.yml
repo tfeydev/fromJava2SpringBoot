@@ -1,4 +1,4 @@
-name: Build & Deploy SpringBootAngularFullstack
+name: Build and Deploy SpringBootAngularFullstack
 
 on:
   push:
@@ -9,7 +9,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -26,7 +25,7 @@ jobs:
         run: |
           docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
-      - name: Debug: list built file
+      - name: Debug list built file
         run: |
           echo "Local files:"
           ls -la SpringBootAngularFullstack || true
@@ -35,14 +34,14 @@ jobs:
         run: |
           printf '%s\n' "${{ secrets.VM_SSH_KEY }}" > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
-          echo "Wrote SSH key to /tmp/deploy_key"
+          ls -l /tmp/deploy_key
 
       - name: Copy image to VM (scp)
         run: |
           set -x
           scp -o StrictHostKeyChecking=no -i /tmp/deploy_key \
             SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz \
-            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/ubuntu/dev/
+            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/ubuntu/dev
           echo "SCP completed"
 
       - name: Deploy on VM (ssh)
@@ -51,7 +50,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} <<'REMOTE'
             set -e
             cd /home/ubuntu/dev
-            echo "Remote: listing /home/ubuntu/dev"
+            echo "Remote listing:"
             ls -la /home/ubuntu/dev
             if [ -f springboot-angular-fullstack.tar.gz ]; then
               gunzip -c springboot-angular-fullstack.tar.gz | docker load
