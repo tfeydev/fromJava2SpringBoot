@@ -60,7 +60,7 @@ jobs:
       # 7️⃣ Container starten/aktualisieren auf der VM
       - name: Deploy Docker Container via SSH
         if: steps.changes.outputs.changed == 'true'
-        uses: appleboy/ssh-action@v0.1.6
+        uses: appleboy/ssh-action@0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
@@ -73,7 +73,7 @@ jobs:
       # 8️⃣ Prüfen, ob Container läuft + Logs
       - name: Verify Container and Show Logs
         if: steps.changes.outputs.changed == 'true'
-        uses: appleboy/ssh-action@v0.1.6
+        uses: appleboy/ssh-action@0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
@@ -82,4 +82,9 @@ jobs:
             echo "✅ Checking container status..."
             docker ps | grep springboot-angular
             echo "📝 Last 20 log lines:"
-            docker logs --tail 20 $(docker ps -q -f name=springboot-angular)
+            CONTAINER_ID=$(docker ps -q -f name=springboot-angular)
+            if [ -n "$CONTAINER_ID" ]; then
+              docker logs --tail 20 $CONTAINER_ID
+            else
+              echo "No running springboot-angular container found."
+            fi
