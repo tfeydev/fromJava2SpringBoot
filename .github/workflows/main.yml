@@ -9,39 +9,35 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1️⃣ Checkout repository mit kompletter History
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # 2️⃣ Docker-Image bauen
       - name: Build Docker image
         working-directory: ./SpringBootAngularFullstack
-        run: docker build -t springboot-angular-fullstack:latest .
+        run: |
+          docker build -t springboot-angular-fullstack:latest .
 
-      # 3️⃣ Docker-Image speichern
       - name: Save Docker image
         working-directory: ./SpringBootAngularFullstack
-        run: docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
+        run: |
+          docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
-      # 4️⃣ Debug: prüfen, dass tar.gz existiert
       - name: Debug: list files
-        run: ls -l ./SpringBootAngularFullstack/
+        run: |
+          ls -l ./SpringBootAngularFullstack/
 
-      # 5️⃣ Docker-Image auf VM kopieren
       - name: Copy Docker image to VM
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          source: "SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz"
-          target: "/home/ubuntu/dev/"
+          source: SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz
+          target: /home/ubuntu/dev/
 
-      # 6️⃣ Container auf VM starten/aktualisieren
       - name: Deploy Docker container via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -52,4 +48,3 @@ jobs:
             cd /home/ubuntu/dev
             gunzip -c springboot-angular-fullstack.tar.gz | docker load
             docker-compose -f docker-compose.yml up -d
-            echo "✅ Deployment finished"
