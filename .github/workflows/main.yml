@@ -60,37 +60,30 @@ jobs:
       - name: Save Frontend Docker Image
         run: docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
 
-      # 9️⃣ Write SSH key to a file
+      # 9️⃣ Write SSH key to a file and debug
       - name: Write SSH Private Key to File
         run: |
           echo "${{ secrets.VM_PRIVATE_KEY }}" > /tmp/ssh_key
           chmod 600 /tmp/ssh_key
+          ls -l /tmp/ssh_key
+          head -n 2 /tmp/ssh_key
+          tail -n 2 /tmp/ssh_key
 
-      # 🔟 Docker-Image auf die VM kopieren (Backend)
-      - name: Copy Backend Image to VM
+      # 🔟 Check SSH key file before SCP
+      - name: Check SSH Key File
+        run: |
+          ls -l /tmp/ssh_key || echo "SSH key file not found!"
+          cat /tmp/ssh_key | head -n 2
+          cat /tmp/ssh_key | tail -n 2
+
+      # 1️⃣1️⃣ Docker-Image auf die VM kopieren
+      - name: Copy Docker Images to VM
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key_path: /tmp/ssh_key
-          source: SpringBootAngularFullstack/backend.tar.gz
-          target: /home/ubuntu/dev/
-          port: 22
-          timeout: 30s
-          command_timeout: 10m
-          use_insecure_cipher: false
-          rm: false
-          debug: true
-          overwrite: true
-
-      # 1️⃣1️⃣ Docker-Image auf die VM kopieren (Frontend)
-      - name: Copy Frontend Image to VM
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key_path: /tmp/ssh_key
-          source: SpringBootAngularFullstack/frontend.tar.gz
+          source: SpringBootAngularFullstack/backend.tar.gz,SpringBootAngularFullstack/frontend.tar.gz
           target: /home/ubuntu/dev/
           port: 22
           timeout: 30s
