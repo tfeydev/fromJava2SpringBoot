@@ -1,4 +1,4 @@
-name: Build and Deploy SpringBootAngularFullstack
+name: Build & Deploy SpringBootAngularFullstack
 
 on:
   push:
@@ -11,71 +11,88 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Repository auschecken
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Frontend build if present
+      # 2️⃣ Java 21 bereitstellen
+      - name: Setup Java 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # 3️⃣ Maven Backend Build
+      - name: Build Backend with Maven
+        working-directory: ./SpringBootAngularFullstack/backend
         run: |
-          if [ -f SpringBootAngularFullstack/frontend/package.json ]; then
-            echo "Frontend build found - running build"
-            cd SpringBootAngularFullstack/frontend
-            npm ci
-            npm run build
-          else
-            echo "No frontend build required"
+          chmod +x ./mvnw || true
+          ./mvnw clean package -DskipTests
+          ls -l target/
+
+      # 4️⃣ Optional: Build Frontend (Angular)
+      - name: Build Frontend (Optional)
+        working-directory: ./SpringBootAngularFullstack/frontend
+        run: |
+          if [ -f package.json ]; then
+            npm install
+            npm run build --prod
           fi
+          ls -l dist/
 
-      - name: Build backend artifact
+      # 5️⃣ Docker-Image für Backend bauen
+      - name: Build Backend Docker Image
         run: |
-          if [ -f SpringBootAngularFullstack/backend/mvnw ]; then
-            chmod +x SpringBootAngularFullstack/backend/mvnw
-            cd SpringBootAngularFullstack/backend
-            ./mvnw clean package -DskipTests
-          else
-            cd SpringBootAngularFullstack/backend
-            mvn clean package -DskipTests
-          fi
-          ls -l SpringBootAngularFullstack/backend/target || true
+          docker build -t springboot-angular-fullstack-backend:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
 
-
-      - name: Build backend Docker image
+      # 6️⃣ Docker-Image für Frontend bauen
+      - name: Build Frontend Docker Image
         run: |
-          docker build -t springboot-angular-fullstack:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
+          docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
 
-      - name: Save Docker image to tar.gz
-        run: |
-          docker save springboot-angular-fullstack:latest | gzip > SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz
-          ls -l SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz
+      # 7️⃣ Optional: Zusammenführen in ein Single-Image
+      # Falls du nur ein Image willst, musst du Backend und Frontend in einem Dockerfile kombinieren
+      # Andernfalls separate Container im docker-compose.yml verwenden
 
-      - name: Write SSH key to runner
-        run: |
-          printf '%s\n' "${{ secrets.VM_SSH_KEY }}" > /tmp/deploy_key
-          chmod 600 /tmp/deploy_key
-          ls -l /tmp/deploy_key
+      # 8️⃣ Docker-Image als tar.gz speichern (Backend)
+      - name: Save Backend Docker Image
+        run: docker save springboot-angular-fullstack-backend:latest | gzip > SpringBootAngularFullstack/backend.tar.gz
 
-      - name: Copy image to VM using scp
-        run: |
-          set -e -x
-          scp -o StrictHostKeyChecking=no -i /tmp/deploy_key \
-            SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz \
-            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/ubuntu/dev
-          echo "SCP completed"
+      # 9️⃣ Docker-Image als tar.gz speichern (Frontend)
+      - name: Save Frontend Docker Image
+        run: docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
 
-      - name: Deploy on VM using ssh
-        run: |
-          set -e -x
-          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} <<'REMOTE'
-            set -e
+      # 🔟 Docker-Image auf die VM kopieren (Backend)
+      - name: Copy Backend Image to VM
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: "SpringBootAngularFullstack/backend.tar.gz"
+          target: "/home/ubuntu/dev/"
+
+      # 1️⃣1️⃣ Docker-Image auf die VM kopieren (Frontend)
+      - name: Copy Frontend Image to VM
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: "SpringBootAngularFullstack/frontend.tar.gz"
+          target: "/home/ubuntu/dev/"
+
+      # 1️⃣2️⃣ Docker-Container via SSH auf VM starten/aktualisieren
+      - name: Deploy Docker Containers via SSH
+        uses: appleboy/ssh-action@0.1.6
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
             cd /home/ubuntu/dev
-            ls -la /home/ubuntu/dev
-            if [ -f springboot-angular-fullstack.tar.gz ]; then
-              gunzip -c springboot-angular-fullstack.tar.gz | docker load
-              docker-compose -f docker-compose.yml up -d
-              echo "DEPLOY_OK"
-            else
-              echo "ERROR: tar.gz not found on VM"
-              exit 1
-            fi
-          REMOTE
+            gunzip -c backend.tar.gz | docker load
+            gunzip -c frontend.tar.gz | docker load
+            docker-compose -f docker-compose.yml up -d --build
