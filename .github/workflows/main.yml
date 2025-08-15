@@ -60,13 +60,19 @@ jobs:
       - name: Save Frontend Docker Image
         run: docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
 
-      # 9️⃣ Docker-Image auf die VM kopieren (Backend)
+      # 9️⃣ Write SSH key to a file
+      - name: Write SSH Private Key to File
+        run: |
+          echo "${{ secrets.VM_PRIVATE_KEY }}" > /tmp/ssh_key
+          chmod 600 /tmp/ssh_key
+
+      # 🔟 Docker-Image auf die VM kopieren (Backend)
       - name: Copy Backend Image to VM
-        uses: appleboy/scp-action@v0.1.5
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_PRIVATE_KEY }}   # <-- hier kompletter privater Key aus GitHub Secret
+          key_path: /tmp/ssh_key
           source: SpringBootAngularFullstack/backend.tar.gz
           target: /home/ubuntu/dev/
           port: 22
@@ -74,27 +80,33 @@ jobs:
           command_timeout: 10m
           use_insecure_cipher: false
           rm: false
-          debug: false
+          debug: true
           overwrite: true
 
-
-      # 🔟 Docker-Image auf die VM kopieren (Frontend)
+      # 1️⃣1️⃣ Docker-Image auf die VM kopieren (Frontend)
       - name: Copy Frontend Image to VM
-        uses: appleboy/scp-action@v0.1.5
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_PRIVATE_KEY }}
-          source: "SpringBootAngularFullstack/frontend.tar.gz"
-          target: "/home/ubuntu/dev/"
+          key_path: /tmp/ssh_key
+          source: SpringBootAngularFullstack/frontend.tar.gz
+          target: /home/ubuntu/dev/
+          port: 22
+          timeout: 30s
+          command_timeout: 10m
+          use_insecure_cipher: false
+          rm: false
+          debug: true
+          overwrite: true
 
-      # 1️⃣1️⃣ Docker-Container via SSH auf VM starten/aktualisieren
+      # 1️⃣2️⃣ Docker-Container via SSH auf VM starten/aktualisieren
       - name: Deploy Docker Containers via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_PRIVATE_KEY }}
+          key_path: /tmp/ssh_key
           script: |
             cd /home/ubuntu/dev
             gunzip -c backend.tar.gz | docker load
