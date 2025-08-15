@@ -42,14 +42,25 @@ jobs:
           fi
           ls -l dist/
 
-      # 5️⃣ Docker-Images bauen
+      # 5️⃣ Docker-Image für Backend bauen
       - name: Build Backend Docker Image
-        run: docker build -t springboot-angular-fullstack-backend:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
+        run: |
+          docker build -t springboot-angular-fullstack-backend:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
 
+      # 6️⃣ Docker-Image für Frontend bauen
       - name: Build Frontend Docker Image
-        run: docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
+        run: |
+          docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
 
-      # 6️⃣ SSH Key schreiben
+      # 7️⃣ Docker-Image als tar.gz speichern (Backend)
+      - name: Save Backend Docker Image
+        run: docker save springboot-angular-fullstack-backend:latest | gzip > SpringBootAngularFullstack/backend.tar.gz
+
+      # 8️⃣ Docker-Image als tar.gz speichern (Frontend)
+      - name: Save Frontend Docker Image
+        run: docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
+
+      # 9️⃣ SSH Key schreiben
       - name: Write SSH Private Key
         run: |
           mkdir -p /tmp/ssh
@@ -57,7 +68,7 @@ jobs:
           chmod 600 /tmp/ssh/id_rsa
           ls -l /tmp/ssh/id_rsa
 
-      # 7️⃣ Docker Images per Stream auf VM laden & Container starten
+      # 🔟 Docker Images per SSH Stream auf die VM laden und Container starten
       - name: Deploy Docker Images via SSH Stream
         run: |
           (
