@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-
+    workflow_sispatch:
+    
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -20,7 +21,7 @@ jobs:
       run: |
         echo "Checking for changes in SpringBootAngularFullstack..."
         git fetch origin main
-        CHANGED=$(git diff --name-only origin/main HEAD | grep '^SpringBootAngularFullstack/')
+        CHANGED=$(git diff --name-only origin/main HEAD | grep '^SpringBootAngularFullstack/' || true)
         if [ -z "$CHANGED" ]; then
           echo "No changes detected in SpringBootAngularFullstack."
           echo "changed=false" >> $GITHUB_OUTPUT
