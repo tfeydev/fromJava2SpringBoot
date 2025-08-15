@@ -1,4 +1,4 @@
-name: Deploy to Oracle VM
+name: Build & Deploy SpringBootAngularFullstack
 
 on:
   push:
@@ -6,36 +6,62 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    # 1️⃣ Repo auschecken
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.7.0
+    # 2️⃣ Prüfen, ob SpringBootAngularFullstack geändert wurde
+    - name: Check for changes in SpringBootAngularFullstack
+      id: changes
+      run: |
+        echo "Checking for changes in SpringBootAngularFullstack..."
+        git fetch origin main
+        CHANGED=$(git diff --name-only origin/main HEAD | grep '^SpringBootAngularFullstack/')
+        if [ -z "$CHANGED" ]; then
+          echo "No changes detected in SpringBootAngularFullstack."
+          echo "changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "Changes detected."
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+
+    # 3️⃣ Build Docker-Image nur wenn nötig
+    - name: Build Docker Image
+      if: steps.changes.outputs.changed == 'true'
+      working-directory: ./SpringBootAngularFullstack
+      run: |
+        docker build -t springboot-angular-fullstack:latest .
+
+    # 4️⃣ Save Docker Image als tar.gz
+    - name: Save Docker Image
+      if: steps.changes.outputs.changed == 'true'
+      run: |
+        docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
+
+    # 5️⃣ SCP auf VM übertragen
+    - name: Copy Docker Image to Oracle VM
+      if: steps.changes.outputs.changed == 'true'
+      uses: appleboy/scp-action@v0.1.5
       with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        source: "SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz"
+        target: "/home/ubuntu/dev/"
 
-    - name: Create .env file
-        run: |
-          echo "DB_URL=${{ secrets.DB_URL }}" >> backend/.env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> backend/.env
-          echo "DB_PASS=${{ secrets.DB_PASS }}" >> backend/.env
-
-    - name: Decode Oracle Wallet
-      run: |
-        echo "$WALLET_ZIP_B64" | base64 -d > wallet.zip
-        unzip wallet.zip -d backend/src/main/resources/wallet
-      env:
-        WALLET_ZIP_B64: ${{ secrets.WALLET_ZIP_B64 }}
-
-    - name: Deploy via SSH
-      run: |
-        ssh -o StrictHostKeyChecking=no opc@${{ secrets.HOST }} << 'EOF'
-          cd /home/ubuntu/SpringBootAngularFullstack
-          git pull origin main
-          docker-compose down
-          docker-compose up -d --build
-        EOF
+    # 6️⃣ Docker-Compose auf VM starten
+    - name: Deploy Docker Container via SSH
+      if: steps.changes.outputs.changed == 'true'
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/dev
+          gunzip -c springboot-angular-fullstack.tar.gz | docker load
+          docker-compose -f docker-compose.yml up -d --build
