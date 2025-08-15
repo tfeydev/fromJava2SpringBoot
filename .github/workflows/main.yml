@@ -24,7 +24,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # 3️⃣ Backend bauen
+      # 3️⃣ Maven Backend Build
       - name: Build Backend with Maven
         working-directory: ./SpringBootAngularFullstack/backend
         run: |
@@ -32,7 +32,7 @@ jobs:
           ./mvnw clean package -DskipTests
           ls -l target/
 
-      # 4️⃣ Frontend bauen
+      # 4️⃣ Optional: Build Frontend (Angular)
       - name: Build Frontend (Optional)
         working-directory: ./SpringBootAngularFullstack/frontend
         run: |
@@ -48,20 +48,19 @@ jobs:
           docker build -t springboot-angular-fullstack-backend:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
           docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
 
-      # 6️⃣ SSH-Key vorbereiten
+      # 6️⃣ SSH Private Key auf VM schreiben
       - name: Write SSH Private Key
         run: |
-          mkdir -p /tmp/ssh
-          echo "${{ secrets.VM_PRIVATE_KEY }}" | tr -d '\r' > /tmp/ssh/id_rsa
-          chmod 600 /tmp/ssh/id_rsa
-          ls -l /tmp/ssh/id_rsa
+          echo "${{ secrets.VM_PRIVATE_KEY }}" > /tmp/ssh_key
+          chmod 600 /tmp/ssh_key
+          ls -l /tmp/ssh_key
 
-      # 7️⃣ Beide Docker-Images in einem SSH-Aufruf streamen und deployen
+      # 7️⃣ Docker Images via Stream deployen
       - name: Deploy Docker Images via SSH Stream
         run: |
-          {
+          (
             docker save springboot-angular-fullstack-backend:latest
             docker save springboot-angular-fullstack-frontend:latest
-          } | gzip | \
-          ssh -i /tmp/ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
+          ) | gzip | \
+          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
           "gunzip | docker load && echo 'All images loaded'; cd /home/ubuntu/dev && docker-compose -f docker-compose.yml up -d --build"
