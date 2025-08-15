@@ -60,7 +60,7 @@ jobs:
       # 7️⃣ Container starten/aktualisieren auf der VM
       - name: Deploy Docker Container via SSH
         if: steps.changes.outputs.changed == 'true'
-        uses: appleboy/ssh-action@0.1.6
+        uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
@@ -73,7 +73,7 @@ jobs:
       # 8️⃣ Prüfen, ob Container läuft + Logs
       - name: Verify Container and Show Logs
         if: steps.changes.outputs.changed == 'true'
-        uses: appleboy/ssh-action@0.1.6
+        uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
