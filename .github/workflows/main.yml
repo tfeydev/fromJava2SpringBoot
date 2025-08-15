@@ -35,13 +35,18 @@ jobs:
         working-directory: ./SpringBootAngularFullstack
         run: docker build -t springboot-angular-fullstack:latest .
 
-      # 4️⃣ Image speichern (bleibt im selben Ordner!)
+      # 4️⃣ Image speichern im Unterordner
       - name: Save Docker Image
         if: steps.changes.outputs.changed == 'true'
         working-directory: ./SpringBootAngularFullstack
         run: docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
-      # 5️⃣ Image auf VM kopieren (korrekter Pfad!)
+      # 5️⃣ Debug-Step: prüfen, ob die Datei existiert
+      - name: Debug: list Docker image file
+        if: steps.changes.outputs.changed == 'true'
+        run: ls -l SpringBootAngularFullstack/
+
+      # 6️⃣ Image auf VM kopieren
       - name: Copy Docker Image to Oracle VM
         if: steps.changes.outputs.changed == 'true'
         uses: appleboy/scp-action@v0.1.5
@@ -52,7 +57,7 @@ jobs:
           source: "SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz"
           target: "/home/ubuntu/dev/"
 
-      # 6️⃣ Container starten/aktualisieren
+      # 7️⃣ Container starten/aktualisieren auf der VM
       - name: Deploy Docker Container via SSH
         if: steps.changes.outputs.changed == 'true'
         uses: appleboy/ssh-action@v0.1.6
@@ -64,3 +69,17 @@ jobs:
             cd /home/ubuntu/dev
             gunzip -c springboot-angular-fullstack.tar.gz | docker load
             docker-compose -f docker-compose.yml up -d
+
+      # 8️⃣ Prüfen, ob Container läuft + Logs
+      - name: Verify Container and Show Logs
+        if: steps.changes.outputs.changed == 'true'
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            echo "✅ Checking container status..."
+            docker ps | grep springboot-angular
+            echo "📝 Last 20 log lines:"
+            docker logs --tail 20 $(docker ps -q -f name=springboot-angular)
