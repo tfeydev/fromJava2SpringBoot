@@ -4,9 +4,11 @@ services:
       context: ./backend
     container_name: backend
     env_file:
-      - ../../../.env
+      - backend/.env
+    environment:
+      - TNS_ADMIN=/wallet
     volumes:
-      - ${WALLET}:/wallet:ro
+      - ./backend/wallet:/wallet
     ports:
       - "8080:8080"
 

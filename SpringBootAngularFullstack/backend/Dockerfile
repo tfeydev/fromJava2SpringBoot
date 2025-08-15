@@ -1,12 +1,14 @@
-# Stage 1: Build jar (optional, falls schon gebaut, sonst nur Stage 2 nötig)
-# FROM eclipse-temurin:21 AS build
-# WORKDIR /app
-# COPY . .
-# RUN ./mvnw clean package -DskipTests
+# Base image
+FROM eclipse-temurin:21-jdk
 
-# Stage 2: Runtime
-FROM eclipse-temurin:21-jdk-alpine
+# Arbeitsverzeichnis
 WORKDIR /app
+
+# JAR-Datei kopieren
 COPY target/*.jar app.jar
+
+# Port freigeben
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# Startbefehl
+ENTRYPOINT ["java", "-jar", "app.jar"]
