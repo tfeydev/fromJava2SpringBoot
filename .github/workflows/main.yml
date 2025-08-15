@@ -17,17 +17,14 @@ jobs:
 
       - name: Build Docker image
         working-directory: ./SpringBootAngularFullstack
-        run: |
-          docker build -t springboot-angular-fullstack:latest .
+        run: docker build -t springboot-angular-fullstack:latest .
 
       - name: Save Docker image
         working-directory: ./SpringBootAngularFullstack
-        run: |
-          docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
+        run: docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
       - name: Debug: list files
-        run: |
-          ls -l ./SpringBootAngularFullstack/
+        run: ls -l ./SpringBootAngularFullstack
 
       - name: Copy Docker image to VM
         uses: appleboy/scp-action@v0.1.5
@@ -35,8 +32,8 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          source: "SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz"
-          target: "/home/ubuntu/dev/"
+          source: SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz
+          target: /home/ubuntu/dev
 
       - name: Deploy Docker container via SSH
         uses: appleboy/ssh-action@v0.1.6
