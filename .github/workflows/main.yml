@@ -14,8 +14,6 @@ jobs:
       # 1️⃣ Repository auschecken
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       # 2️⃣ Java 21 bereitstellen
       - name: Setup Java 21
@@ -24,7 +22,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # 3️⃣ Optional: Node.js für Frontend
+      # 3️⃣ Node.js für Frontend
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -38,67 +36,41 @@ jobs:
           ./mvnw clean package -DskipTests
           ls -l target/
 
-      # 5️⃣ Optional: Build Frontend (Angular)
+      # 5️⃣ Frontend Build
       - name: Build Frontend
         working-directory: ./SpringBootAngularFullstack/frontend
         run: |
-          if [ -f package.json ]; then
-            npm install
-            npm run build --prod
-          fi
+          npm install
+          npm run build --prod
           ls -l dist/
 
-      # 6️⃣ Docker-Image für Backend bauen
-      - name: Build Backend Docker Image
+      # 6️⃣ Single Docker-Image für Backend+Frontend
+      - name: Build Combined Docker Image
         run: |
-          docker build -t springboot-angular-fullstack-backend:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
+          docker build -t springboot-angular-fullstack:latest -f SpringBootAngularFullstack/Dockerfile .
 
-      # 7️⃣ Docker-Image für Frontend bauen
-      - name: Build Frontend Docker Image
-        run: |
-          docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
+      # 7️⃣ Docker-Image als tar.gz speichern
+      - name: Save Docker Image
+        run: docker save springboot-angular-fullstack:latest | gzip > SpringBootAngularFullstack/fullstack.tar.gz
 
-      # 8️⃣ Docker-Images als tar.gz speichern
-      - name: Save Docker Images
-        run: |
-          docker save springboot-angular-fullstack-backend:latest | gzip > SpringBootAngularFullstack/backend.tar.gz
-          docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
-
-      # 9️⃣ SSH Key vorbereiten
-      - name: Prepare SSH Key
-        run: |
-          echo "${{ secrets.VM_SSH_KEY }}" | tr -d '\r' > /tmp/id_rsa
-          chmod 600 /tmp/id_rsa
-
-      # 🔟 Backend Image via SCP kopieren
-      - name: Copy Backend Image to VM
+      # 8️⃣ Docker-Image via SCP kopieren (Key direkt aus Secret)
+      - name: Copy Docker Image to VM
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key_path: /tmp/id_rsa
-          source: SpringBootAngularFullstack/backend.tar.gz
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: SpringBootAngularFullstack/fullstack.tar.gz
           target: /home/ubuntu/dev/
 
-      # 1️⃣1️⃣ Frontend Image via SCP kopieren
-      - name: Copy Frontend Image to VM
-        uses: appleboy/scp-action@v0.1.5
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key_path: /tmp/id_rsa
-          source: SpringBootAngularFullstack/frontend.tar.gz
-          target: /home/ubuntu/dev/
-
-      # 1️⃣2️⃣ Docker-Container via SSH auf VM starten/aktualisieren
-      - name: Deploy Docker Containers via SSH
+      # 9️⃣ Docker-Container via SSH starten/aktualisieren
+      - name: Deploy Docker Container via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key_path: /tmp/id_rsa
+          key: ${{ secrets.VM_SSH_KEY }}
           script: |
             cd /home/ubuntu/dev
-            gunzip -c backend.tar.gz | docker load
-            gunzip -c frontend.tar.gz | docker load
+            gunzip -c fullstack.tar.gz | docker load
             docker-compose -f docker-compose.yml up -d --build
