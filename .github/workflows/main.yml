@@ -28,7 +28,7 @@ jobs:
       - name: Build Backend with Maven
         working-directory: ./SpringBootAngularFullstack/backend
         run: |
-          chmod +x ./mvnw
+          chmod +x ./mvnw || true
           ./mvnw clean package -DskipTests
           ls -l target/
 
@@ -45,16 +45,12 @@ jobs:
       # 5️⃣ Docker-Image für Backend bauen
       - name: Build Backend Docker Image
         run: |
-          docker build -t springboot-angular-fullstack-backend:latest \
-          -f SpringBootAngularFullstack/backend/Dockerfile \
-          SpringBootAngularFullstack/backend
+          docker build -t springboot-angular-fullstack-backend:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
 
       # 6️⃣ Docker-Image für Frontend bauen
       - name: Build Frontend Docker Image
         run: |
-          docker build -t springboot-angular-fullstack-frontend:latest \
-          -f SpringBootAngularFullstack/frontend/Dockerfile \
-          SpringBootAngularFullstack/frontend
+          docker build -t springboot-angular-fullstack-frontend:latest -f SpringBootAngularFullstack/frontend/Dockerfile SpringBootAngularFullstack/frontend
 
       # 7️⃣ Docker-Image als tar.gz speichern (Backend)
       - name: Save Backend Docker Image
@@ -64,17 +60,17 @@ jobs:
       - name: Save Frontend Docker Image
         run: docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
 
-      # 9️⃣ Backend Image auf VM kopieren
+      # 9️⃣ Docker-Image auf die VM kopieren (Backend)
       - name: Copy Backend Image to VM
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_PRIVATE_KEY }}
+          key: ${{ secrets.VM_PRIVATE_KEY }}    # <-- kompletter privater Key als Secret
           source: "SpringBootAngularFullstack/backend.tar.gz"
           target: "/home/ubuntu/dev/"
 
-      # 🔟 Frontend Image auf VM kopieren
+      # 🔟 Docker-Image auf die VM kopieren (Frontend)
       - name: Copy Frontend Image to VM
         uses: appleboy/scp-action@v0.1.5
         with:
