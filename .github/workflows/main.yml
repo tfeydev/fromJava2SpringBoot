@@ -16,26 +16,38 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: (Optional) Build frontend if present
+      - name: Optional: Build frontend if present
         run: |
           if [ -f SpringBootAngularFullstack/frontend/package.json ]; then
-            echo "Frontend package.json found — running build"
+            echo "Frontend build detected - running npm build"
             cd SpringBootAngularFullstack/frontend
             npm ci
-            npm run build
-            echo "Frontend build finished"
+            npm run build || { echo "Frontend build failed"; exit 1; }
+            echo "Frontend build done"
           else
-            echo "No frontend/package.json — skipping frontend build"
+            echo "No frontend to build - skipping"
           fi
+
+      - name: Build backend artifact (Maven)
+        run: |
+          if [ -f SpringBootAngularFullstack/backend/mvnw ]; then
+            echo "Using Maven Wrapper"
+            cd SpringBootAngularFullstack/backend
+            ./mvnw clean package -DskipTests
+          else
+            echo "No mvnw found, trying system mvn"
+            cd SpringBootAngularFullstack/backend
+            mvn clean package -DskipTests
+          fi
+          echo "Backend artifact build finished"
+          ls -l SpringBootAngularFullstack/backend/target || true
 
       - name: Build backend Docker image
         run: |
-          # Baue Image mit Backend-Dockerfile (Pfad, den du genannt hast)
           docker build -t springboot-angular-fullstack:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
 
-      - name: Save Docker image to tar.gz
+      - name: Save Docker image
         run: |
-          mkdir -p SpringBootAngularFullstack/tmp
           docker save springboot-angular-fullstack:latest | gzip > SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz
           ls -l SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz
 
@@ -47,7 +59,7 @@ jobs:
 
       - name: Copy image to VM (scp)
         run: |
-          set -x
+          set -e -x
           scp -o StrictHostKeyChecking=no -i /tmp/deploy_key \
             SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/ubuntu/dev
@@ -55,15 +67,14 @@ jobs:
 
       - name: Deploy on VM (ssh)
         run: |
-          set -x
+          set -e -x
           ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} <<'REMOTE'
             set -e
             cd /home/ubuntu/dev
-            echo "Remote listing /home/ubuntu/dev:"
+            echo "Remote listing /home/ubuntu/dev"
             ls -la /home/ubuntu/dev
             if [ -f springboot-angular-fullstack.tar.gz ]; then
               gunzip -c springboot-angular-fullstack.tar.gz | docker load
-              # Start/Update via docker-compose (nutzt docker-compose.yml in /home/ubuntu/dev)
               docker-compose -f docker-compose.yml up -d
               echo "DEPLOY_OK"
             else
