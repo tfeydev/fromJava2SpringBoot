@@ -7,43 +7,32 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository mit voller History
+      # 1️⃣ Repo auschecken (komplette History)
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # 2️⃣ Check for changes
-      - name: Check for changes
-        id: changes
-        run: |
-          echo "Checking for changes..."
-          CHANGED=$(git diff --name-only origin/main HEAD | grep '^SpringBootAngularFullstack/' || true)
-          if [ -z "$CHANGED" ]; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-          else
-            echo "changed=true" >> $GITHUB_OUTPUT
-          fi
-
-      # 3️⃣ Build Docker image
+      # 2️⃣ Docker-Image bauen
       - name: Build Docker image
-        if: steps.changes.outputs.changed == 'true'
         working-directory: ./SpringBootAngularFullstack
         run: docker build -t springboot-angular-fullstack:latest .
 
-      # 4️⃣ Save Docker image
+      # 3️⃣ Docker-Image speichern
       - name: Save Docker image
-        if: steps.changes.outputs.changed == 'true'
         working-directory: ./SpringBootAngularFullstack
         run: docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
-      # 5️⃣ Copy Docker image to VM
+      # 4️⃣ Debug: Liste Dateien, um zu prüfen, dass die tar.gz existiert
+      - name: Debug: check tar.gz
+        run: ls -l ./SpringBootAngularFullstack/
+
+      # 5️⃣ Docker-Image auf VM kopieren
       - name: Copy Docker image to VM
-        if: steps.changes.outputs.changed == 'true'
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.VM_HOST }}
@@ -52,9 +41,8 @@ jobs:
           source: "SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz"
           target: "/home/ubuntu/dev/"
 
-      # 6️⃣ Deploy container via SSH
-      - name: Deploy Docker container
-        if: steps.changes.outputs.changed == 'true'
+      # 6️⃣ Docker-Container auf VM starten
+      - name: Deploy Docker container via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
@@ -64,21 +52,4 @@ jobs:
             cd /home/ubuntu/dev
             gunzip -c springboot-angular-fullstack.tar.gz | docker load
             docker-compose -f docker-compose.yml up -d
-
-      # 7️⃣ Verify container + logs
-      - name: Verify container
-        if: steps.changes.outputs.changed == 'true'
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          script: |
-            echo "Container status:"
-            docker ps --filter "name=springboot-angular"
-            CID=$(docker ps -q -f name=springboot-angular)
-            if [ -n "$CID" ]; then
-              docker logs --tail 20 $CID
-            else
-              echo "No running springboot-angular container found."
-            fi
+            echo "✅ Deployment finished"
