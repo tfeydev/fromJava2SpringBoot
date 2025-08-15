@@ -4,63 +4,62 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:  # erlaubt manuelles Auslösen
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ Repo auschecken
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # 1️⃣ Repo auschecken
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # 2️⃣ Prüfen, ob SpringBootAngularFullstack geändert wurde
-    - name: Check for changes in SpringBootAngularFullstack
-      id: changes
-      run: |
-        echo "Checking for changes in SpringBootAngularFullstack..."
-        git fetch origin main
-        CHANGED=$(git diff --name-only origin/main HEAD | grep '^SpringBootAngularFullstack/' || true)
-        if [ -z "$CHANGED" ]; then
-          echo "No changes detected in SpringBootAngularFullstack."
-          echo "changed=false" >> $GITHUB_OUTPUT
-        else
-          echo "Changes detected."
-          echo "changed=true" >> $GITHUB_OUTPUT
-        fi
+      # 2️⃣ Änderungen prüfen
+      - name: Check for changes in SpringBootAngularFullstack
+        id: changes
+        run: |
+          echo "Checking for changes in SpringBootAngularFullstack..."
+          CHANGED=$(git diff --name-only HEAD~1 HEAD | grep '^SpringBootAngularFullstack/' || true)
+          if [ -z "$CHANGED" ]; then
+            echo "No changes detected in SpringBootAngularFullstack."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected."
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
-    # 3️⃣ Build Docker-Image nur wenn nötig
-    - name: Build Docker Image
-      if: steps.changes.outputs.changed == 'true'
-      working-directory: ./SpringBootAngularFullstack
-      run: docker build -t springboot-angular-fullstack:latest .
+      # 3️⃣ Docker-Image bauen
+      - name: Build Docker Image
+        if: steps.changes.outputs.changed == 'true'
+        working-directory: ./SpringBootAngularFullstack
+        run: docker build -t springboot-angular-fullstack:latest .
 
-    # 4️⃣ Docker-Image als tar.gz speichern
-    - name: Save Docker Image
-      if: steps.changes.outputs.changed == 'true'
-      run: docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
+      # 4️⃣ Image speichern
+      - name: Save Docker Image
+        if: steps.changes.outputs.changed == 'true'
+        run: docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
 
-    # 5️⃣ Docker-Image auf VM übertragen
-    - name: Copy Docker Image to Oracle VM
-      if: steps.changes.outputs.changed == 'true'
-      uses: appleboy/scp-action@v0.1.5
-      with:
-        host: ${{ secrets.VM_HOST }}
-        username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.VM_SSH_KEY }}
-        source: "SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz"
-        target: "/home/ubuntu/dev/"
+      # 5️⃣ Image auf VM kopieren
+      - name: Copy Docker Image to Oracle VM
+        if: steps.changes.outputs.changed == 'true'
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: "springboot-angular-fullstack.tar.gz"
+          target: "/home/ubuntu/dev/"
 
-    # 6️⃣ Docker-Container auf VM starten/aktualisieren
-    - name: Deploy Docker Container via SSH
-      if: steps.changes.outputs.changed == 'true'
-      uses: appleboy/ssh-action@v0.1.6
-      with:
-        host: ${{ secrets.VM_HOST }}
-        username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.VM_SSH_KEY }}
-        script: |
-          cd /home/ubuntu/dev
-          gunzip -c springboot-angular-fullstack.tar.gz | docker load
-          docker-compose -f docker-compose.yml up -d --build
+      # 6️⃣ Container starten/aktualisieren
+      - name: Deploy Docker Container via SSH
+        if: steps.changes.outputs.changed == 'true'
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/dev
+            gunzip -c springboot-angular-fullstack.tar.gz | docker load
+            docker-compose -f docker-compose.yml up -d --build
