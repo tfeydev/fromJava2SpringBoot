@@ -60,29 +60,23 @@ jobs:
       - name: Save Frontend Docker Image
         run: docker save springboot-angular-fullstack-frontend:latest | gzip > SpringBootAngularFullstack/frontend.tar.gz
 
-      # 9️⃣ Write SSH key to a file and debug
+      # 9️⃣ SSH Key korrekt schreiben
       - name: Write SSH Private Key to File
         run: |
-          echo "${{ secrets.VM_PRIVATE_KEY }}" > /tmp/ssh_key
-          chmod 600 /tmp/ssh_key
-          ls -l /tmp/ssh_key
-          head -n 2 /tmp/ssh_key
-          tail -n 2 /tmp/ssh_key
+          mkdir -p /tmp/ssh
+          echo "${{ secrets.VM_PRIVATE_KEY }}" | tr -d '\r' > /tmp/ssh/id_rsa
+          chmod 600 /tmp/ssh/id_rsa
+          ls -l /tmp/ssh/id_rsa
+          head -n 2 /tmp/ssh/id_rsa
+          tail -n 2 /tmp/ssh/id_rsa
 
-      # 🔟 Check SSH key file before SCP
-      - name: Check SSH Key File
-        run: |
-          ls -l /tmp/ssh_key || echo "SSH key file not found!"
-          cat /tmp/ssh_key | head -n 2
-          cat /tmp/ssh_key | tail -n 2
-
-      # 1️⃣1️⃣ Docker-Image auf die VM kopieren
+      # 🔟 Docker-Images auf die VM kopieren
       - name: Copy Docker Images to VM
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key_path: /tmp/ssh_key
+          key_path: /tmp/ssh/id_rsa
           source: SpringBootAngularFullstack/backend.tar.gz,SpringBootAngularFullstack/frontend.tar.gz
           target: /home/ubuntu/dev/
           port: 22
@@ -93,13 +87,13 @@ jobs:
           debug: true
           overwrite: true
 
-      # 1️⃣2️⃣ Docker-Container via SSH auf VM starten/aktualisieren
+      # 1️⃣1️⃣ Docker-Container via SSH starten/aktualisieren
       - name: Deploy Docker Containers via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key_path: /tmp/ssh_key
+          key_path: /tmp/ssh/id_rsa
           script: |
             cd /home/ubuntu/dev
             gunzip -c backend.tar.gz | docker load
