@@ -9,26 +9,35 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Build Docker image
-        working-directory: ./SpringBootAngularFullstack
+      - name: (Optional) Build frontend if present
         run: |
-          docker build -t springboot-angular-fullstack:latest .
+          if [ -f SpringBootAngularFullstack/frontend/package.json ]; then
+            echo "Frontend package.json found — running build"
+            cd SpringBootAngularFullstack/frontend
+            npm ci
+            npm run build
+            echo "Frontend build finished"
+          else
+            echo "No frontend/package.json — skipping frontend build"
+          fi
 
-      - name: Save Docker image
-        working-directory: ./SpringBootAngularFullstack
+      - name: Build backend Docker image
         run: |
-          docker save springboot-angular-fullstack:latest | gzip > springboot-angular-fullstack.tar.gz
+          # Baue Image mit Backend-Dockerfile (Pfad, den du genannt hast)
+          docker build -t springboot-angular-fullstack:latest -f SpringBootAngularFullstack/backend/Dockerfile SpringBootAngularFullstack/backend
 
-      - name: Debug list built file
+      - name: Save Docker image to tar.gz
         run: |
-          echo "Local files:"
-          ls -la SpringBootAngularFullstack || true
+          mkdir -p SpringBootAngularFullstack/tmp
+          docker save springboot-angular-fullstack:latest | gzip > SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz
+          ls -l SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz
 
       - name: Write SSH key to runner
         run: |
@@ -42,7 +51,7 @@ jobs:
           scp -o StrictHostKeyChecking=no -i /tmp/deploy_key \
             SpringBootAngularFullstack/springboot-angular-fullstack.tar.gz \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/ubuntu/dev
-          echo "SCP completed"
+          echo "SCP finished"
 
       - name: Deploy on VM (ssh)
         run: |
@@ -50,14 +59,15 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} <<'REMOTE'
             set -e
             cd /home/ubuntu/dev
-            echo "Remote listing:"
+            echo "Remote listing /home/ubuntu/dev:"
             ls -la /home/ubuntu/dev
             if [ -f springboot-angular-fullstack.tar.gz ]; then
               gunzip -c springboot-angular-fullstack.tar.gz | docker load
+              # Start/Update via docker-compose (nutzt docker-compose.yml in /home/ubuntu/dev)
               docker-compose -f docker-compose.yml up -d
               echo "DEPLOY_OK"
             else
-              echo "ERROR: tar.gz not found on VM"
+              echo "ERROR: springboot-angular-fullstack.tar.gz not found on VM"
               exit 1
             fi
           REMOTE
