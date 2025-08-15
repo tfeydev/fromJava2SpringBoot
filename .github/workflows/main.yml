@@ -30,6 +30,7 @@ jobs:
       - name: Build backend artifact
         run: |
           if [ -f SpringBootAngularFullstack/backend/mvnw ]; then
+            chmod +x SpringBootAngularFullstack/backend/mvnw
             cd SpringBootAngularFullstack/backend
             ./mvnw clean package -DskipTests
           else
@@ -37,6 +38,7 @@ jobs:
             mvn clean package -DskipTests
           fi
           ls -l SpringBootAngularFullstack/backend/target || true
+
 
       - name: Build backend Docker image
         run: |
