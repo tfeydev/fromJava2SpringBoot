@@ -86,7 +86,7 @@ jobs:
 
       # 1️⃣2️⃣ Docker-Container via SSH auf VM starten/aktualisieren
       - name: Deploy Docker Containers via SSH
-        uses: appleboy/ssh-action@0.1.6
+        uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
