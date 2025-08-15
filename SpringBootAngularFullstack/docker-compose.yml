@@ -4,11 +4,11 @@ services:
       context: ./backend
     container_name: backend
     env_file:
-      - backend/.env
+      - /home/thor/development/.env
     environment:
       - TNS_ADMIN=/wallet
     volumes:
-      - ./backend/wallet:/wallet
+      - /home/thor/development/wallet:/wallet
     ports:
       - "8080:8080"
 
