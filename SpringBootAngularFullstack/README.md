@@ -1,6 +1,6 @@
 # Fullstack E-Commerce Application with Spring Boot, Angular, and Oracle Cloud
 
-This repository is a customized implementation of Chad Darby’s **Full Stack: Angular and Spring Boot** course project (Sections 1–11 completed), adapted to use **Oracle Autonomous Database (ADB)** and **OCI Object Storage** for product images.
+This repository is a customized implementation of Chad Darby’s **Full Stack: Angular and Spring Boot** course project (Sections 1–11 completed), adapted to use **Oracle Autonomous Database (ADB)** and **OCI Object Storage** for product images.\
 Development of Section 14 and further enterprise-grade enhancements will follow.
 
 ---
@@ -46,10 +46,10 @@ Development of Section 14 and further enterprise-grade enhancements will follow.
 
 ### 1. Prerequisites
 
-* Oracle Autonomous Database (OCI)
-* Java 21, Maven 3.8+
-* Node.js & npm for Angular
-* OCI account with Object Storage bucket
+- Oracle Autonomous Database (OCI)
+- Java 21, Maven 3.8+
+- Node.js & npm for Angular
+- OCI account with Object Storage bucket
 
 ---
 
@@ -111,9 +111,9 @@ npm start
 
 Open: [http://localhost:4200](http://localhost:4200)
 
-**OCI Image Integration:**
-Product images are retrieved from an OCI Object Storage bucket.
-For local testing, fallback images can be placed in:
+**OCI Image Integration:**\
+Product images are retrieved from an OCI Object Storage bucket.\
+For local testing, fallback images can be placed in:\
 `angular-frontend/src/assets/images/products`
 
 ---
@@ -136,7 +136,8 @@ angular-frontend/
 
 ## 🔮 Next Steps
 
-* Implement PL/SQL procedures (e.g., order handling)
-* Add triggers, auditing, and materialized views
-* Integrate Spring Boot with PL/SQL logic
-* Add CRUD operations with authentication and automated testing
+- Implement PL/SQL procedures (e.g., order handling)
+- Add triggers, auditing, and materialized views
+- Integrate Spring Boot with PL/SQL logic
+- Add CRUD operations with authentication and automated testing
+
