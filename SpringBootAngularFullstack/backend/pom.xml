@@ -130,7 +130,14 @@
 							<version>1.18.38</version>
 						</path>
 					</annotationProcessorPaths>
-				</configuration>
+
+
+    <environmentVariables>
+      <DB_USER>${env.DB_USER}</DB_USER>
+      <DB_PASSWORD>${env.DB_PASSWORD}</DB_PASSWORD>
+      <DB_URL>${env.DB_URL}</DB_URL>
+    </environmentVariables>
+  </configuration>
 			</plugin>
 
 			<plugin>
