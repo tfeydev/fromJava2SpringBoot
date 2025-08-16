@@ -4,7 +4,7 @@ services:
       context: ./backend
     container_name: backend
     env_file:
-      - /home/thor/development/.env
+      - /home/thor/development/.env-dev
     environment:
       - TNS_ADMIN=/wallet
     volumes:
