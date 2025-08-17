@@ -50,9 +50,11 @@ fi
 
 # 6) Kurzer Sicherheits-Output (kein Passwort ausgeben)
 echo "Starting app with:"
-echo "  DB_USER     = $DB_USER"
-echo "  DB_URL      = ${DB_URL:0:120}$( [ ${#DB_URL} -gt 120 ] && echo '...' )"
-echo "  WALLET_PATH = $WALLET_DIR"
+echo "  DB_USER      = $DB_USER"
+echo "  DB_URL       = ${DB_URL:0:120}$( [ ${#DB_URL} -gt 120 ] && echo '...' )"
+echo "  WALLET_PATH  = $WALLET_DIR"
+echo "  FRONTEND_URL = ${FRONTEND_URL}"
+echo "  BACKEND_URL  = ${BACKEND_URL}"
 
 # 7) Maven-Start (clean + run)
 mvn clean spring-boot:run -Dspring-boot.run.profiles="$MVN_PROFILES"
