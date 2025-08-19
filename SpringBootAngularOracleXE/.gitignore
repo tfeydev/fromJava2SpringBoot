@@ -1,0 +1,51 @@
+# -----------------------
+# Environment files
+.env
+.env-dev
+
+# -----------------------
+# Backend
+/backend/target/
+/backend/.mvn/wrapper/maven-wrapper.jar
+!/backend/src/main/**/target/
+!/backend/src/test/**/target/
+
+# -----------------------
+# Frontend
+/frontend/dist/
+/frontend/tmp/
+/frontend/node_modules/
+npm-debug.log
+yarn-error.log
+
+# -----------------------
+# IDEs
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# -----------------------
+# System files
+.DS_Store
+Thumbs.db
+
+# -----------------------
+# Miscellaneous
+/wallet
+/.angular/cache
+.sass-cache/
+.connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
