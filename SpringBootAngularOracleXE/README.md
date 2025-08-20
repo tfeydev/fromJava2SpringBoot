@@ -68,7 +68,7 @@ Create `.env-dev` from the example and fill in real credentials. Example keys us
 
 ```env
 # .env-dev (do not commit)
-DB_URL=jdbc:oracle:thin:@localhost:1521/XEPDB1
+DB_URL=jdbc:oracle:thin:@localhost:1521/XE
 DB_USERNAME=EC
 DB_PASSWORD=ec
 
