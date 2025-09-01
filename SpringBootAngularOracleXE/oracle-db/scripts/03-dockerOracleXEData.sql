@@ -1,10 +1,10 @@
--- Create data for COURSEUSER schema
+-- Create data
 
 -- Categories
--- INSERT INTO PRODUCT_CATEGORY (CATEGORY_NAME) VALUES ('Books');
--- INSERT INTO PRODUCT_CATEGORY (CATEGORY_NAME) VALUES ('Coffee Mugs');
--- INSERT INTO PRODUCT_CATEGORY (CATEGORY_NAME) VALUES ('Mouse Pads');
--- INSERT INTO PRODUCT_CATEGORY (CATEGORY_NAME) VALUES ('Luggage Tags');
+INSERT INTO PRODUCT_CATEGORY (CATEGORY_NAME) VALUES ('Books');
+INSERT INTO PRODUCT_CATEGORY (CATEGORY_NAME) VALUES ('Coffee Mugs');
+INSERT INTO PRODUCT_CATEGORY (CATEGORY_NAME) VALUES ('Mouse Pads');
+INSERT INTO PRODUCT_CATEGORY (CATEGORY_NAME) VALUES ('Luggage Tags');
 
 -- Books
 INSERT INTO PRODUCT (SKU, NAME, DESCRIPTION, IMAGE_URL, ACTIVE, UNITS_IN_STOCK, UNIT_PRICE, CATEGORY_ID, DATE_CREATED) VALUES ('BOOK-TECH-1000', 'Crash Course in Python', 'Learn Python at your own pace. The author explains how the technology works in easy-to-understand language. This book includes working examples that you can apply to your own projects. Purchase the book and get started today!', 'assets/images/products/books/book-luv2code-1000.png', 1, 100, 14.99, 1, SYSDATE);

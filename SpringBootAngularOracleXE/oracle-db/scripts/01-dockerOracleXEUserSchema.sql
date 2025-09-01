@@ -1,9 +1,9 @@
--- Benutzer anlegen
+-- Add user/schema
 CREATE USER ec IDENTIFIED BY ec
 DEFAULT TABLESPACE users
 TEMPORARY TABLESPACE temp
 QUOTA UNLIMITED ON users;
 
--- Rechte vergeben
+-- add rights
 GRANT CONNECT, RESOURCE TO ec;
 ALTER USER ec ACCOUNT UNLOCK;
