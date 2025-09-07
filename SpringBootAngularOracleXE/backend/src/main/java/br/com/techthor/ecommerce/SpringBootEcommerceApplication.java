@@ -1,4 +1,4 @@
-package br.com.techthor;
+package br.com.techthor.ecommerce;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
