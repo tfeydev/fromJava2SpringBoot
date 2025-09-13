@@ -10,7 +10,7 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @Column(name = "first_name")
     private String firstName;
@@ -24,9 +24,9 @@ public class Employee {
     // define constructors
     public Employee() {}
 
-    public Employee(int id, String fristName, String lastName, String email) {
+    public Employee(int id, String firstName, String lastName, String email) {
         this.id = id;
-        this.firstName = fristName;
+        this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
@@ -40,12 +40,12 @@ public class Employee {
         this.id = id;
     }
 
-    public String getFristName() {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFristName(String fristName) {
-        this.firstName = fristName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
