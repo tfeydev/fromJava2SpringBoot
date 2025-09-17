@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@layer components {
+    .table-th {
+        @apply px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider;
+    }
+    .table-td {
+        @apply px-4 py-2 text-sm text-gray-600;
+    }
+    .table-tr {
+        @apply hover:bg-gray-50 transition-colors;
+    }
+}
