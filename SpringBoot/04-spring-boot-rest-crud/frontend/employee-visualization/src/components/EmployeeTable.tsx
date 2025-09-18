@@ -198,7 +198,8 @@ export default function EmployeeTable() {
                             key={emp._links.self.href}
                             className="table-tr cursor-pointer"
                             onClick={() => {
-                                setSelectedEmployee(emp);
+                                setSelectedEmployee(prev =>
+                                    prev && prev._links.self.href === emp._links.self.href ? null : emp);
                                 setEditMode(false);
                                 setPatchMode(false);
                             }}
