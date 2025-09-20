@@ -15,6 +15,9 @@
     <packaging>pom</packaging>
 
     <modules>
-
+        <module>01-SpringBoot-Quickstart</module>
+        <module>02-SpringCore</module>
+        <module>03-spring-boot-hibernate-jpa-crud</module>
+        <module>04-spring-boot-rest-crud</module>
     </modules>
 </project>
