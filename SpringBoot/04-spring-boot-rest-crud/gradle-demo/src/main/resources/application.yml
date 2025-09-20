@@ -19,3 +19,13 @@ spring:
   data:
     rest:
       base-path: /api
+      default-page-size: 20
+
+springdoc:
+  swagger-ui:
+    path: /docs
+
+# Optional: override OpenAPI JSON docs path
+# springdoc:
+#   api-docs:
+#     path: /v3/api-docs
