@@ -3,7 +3,7 @@ spring:
     name: demo
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/dbtechthor
+    url: jdbc:postgresql://localhost:5432/dbtechthor?options=-c%20search_path=employee_directory
     username: techthor
     password: changeme
     driver-class-name: org.postgresql.Driver
@@ -20,6 +20,11 @@ spring:
     rest:
       base-path: /api
       default-page-size: 20
+
+  security:
+    user:
+      name: ${SPRING_SECURITY_USER_NAME:scott}
+      password: ${SPRING_SECURITY_USER_PASSWORD:tiger}
 
 springdoc:
   swagger-ui:
